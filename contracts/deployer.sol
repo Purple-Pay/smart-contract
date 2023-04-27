@@ -4,7 +4,7 @@ pragma solidity ^0.8.17;
 import "./erc20burner.sol";
 import "./nativeburner.sol";
 
-contract DeployCreate2 {
+contract PurplePayBurnerDeployer {
 
     using SafeMath for uint;
 
@@ -44,14 +44,12 @@ contract DeployCreate2 {
         return address(newContract);
     }
 
-    // _amount to be sent in 10**18
-    function getBytecode(
+    function predictAddress(
         string memory _salt,
         address _erc20Token,
-        uint _amount,
+        uint _amount, // 10 USDC -> 10000000; 0.005 eth 5000000000000000
         address _merchantAddress,
-        address _purplePayMultiSig,
-        uint _decimals
+        address _purplePayMultiSig
     ) public view returns (address) {
         bytes memory nativeContractBytecode = abi.encodePacked(
             type(NativeBurnerContract).creationCode,
@@ -65,8 +63,7 @@ contract DeployCreate2 {
             abi.encode(_erc20Token),
             abi.encode(_amount),
             abi.encode(_merchantAddress),
-            abi.encode(_purplePayMultiSig),
-            abi.encode(_decimals)
+            abi.encode(_purplePayMultiSig)
         );
 
         bytes memory contractBytecode = _erc20Token == address(0)
