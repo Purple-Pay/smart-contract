@@ -1,13 +1,10 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.17;
+pragma solidity ^0.8.19;
 
 import "@openzeppelin/contracts/interfaces/IERC20.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
-import "@openzeppelin/contracts/utils/Strings.sol";
-
 
 contract ERC20BurnerContract {
-
     using SafeMath for uint;
 
     constructor(
@@ -16,17 +13,11 @@ contract ERC20BurnerContract {
         address _merchantAddress,
         address _purplePayMultiSig
     ) {
-
         IERC20 token = IERC20(_erc20Token);
 
         bool isPaymentCompleted = token.balanceOf(address(this)) >= _amount;
 
-        require(isPaymentCompleted,
-            string.concat(
-                "ERC20 Burner: Payment not completed at ",
-                Strings.toHexString(uint256(uint160(address(this))), 20)
-            )
-        );
+        require(isPaymentCompleted, "ERC20 Burner: Payment incomplete");
 
         uint purplePayFee = SafeMath.div(SafeMath.mul(_amount, 1), 100);
         uint merchantShare = SafeMath.sub(_amount, purplePayFee);

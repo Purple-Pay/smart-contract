@@ -1,11 +1,14 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.17;
+pragma solidity ^0.8.19;
+
+import "@openzeppelin/contracts/interfaces/IERC20.sol";
+import "@openzeppelin/contracts/utils/math/SafeMath.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
 import "./erc20burner.sol";
-import "./nativeburner.sol";
+import "./nativeBurner.sol";
 
-contract PurplePayBurnerDeployer {
-
+contract PurplePayBurnerDeployer is Ownable {
     using SafeMath for uint;
 
     event ContractDeployed(address burnerContract);
@@ -16,41 +19,29 @@ contract PurplePayBurnerDeployer {
         uint _amount,
         address _merchantAddress,
         address _purplePayMultiSig
-    ) public returns(address) {
-
-        if(_erc20Token != address(0)) {
-            ERC20BurnerContract erc20newContract = new ERC20BurnerContract{
+    ) public onlyOwner returns (address) {
+        if (_erc20Token != address(0)) {
+            ERC20BurnerContract erc20Burner = new ERC20BurnerContract{
                 salt: bytes32(keccak256(abi.encodePacked(_salt)))
-            }(
-                _erc20Token,
-                _amount,
-                _merchantAddress,
-                _purplePayMultiSig
-            );
-
-            emit ContractDeployed(address(erc20newContract));
-            return address(erc20newContract);
-
+            }(_erc20Token, _amount, _merchantAddress, _purplePayMultiSig);
+            emit ContractDeployed(address(erc20Burner));
+            return address(erc20Burner);
         }
 
-        NativeBurnerContract newContract = new NativeBurnerContract{
+        NativeBurnerContract nativeBurner = new NativeBurnerContract{
             salt: bytes32(keccak256(abi.encodePacked(_salt)))
-        }(
-            _amount,
-            _merchantAddress,
-            _purplePayMultiSig
-        );
-        emit ContractDeployed(address(newContract));
-        return address(newContract);
+        }(_amount, _merchantAddress, _purplePayMultiSig);
+        emit ContractDeployed(address(nativeBurner));
+        return address(nativeBurner);
     }
 
     function predictAddress(
         string memory _salt,
         address _erc20Token,
-        uint _amount, // 10 USDC -> 10000000; 0.005 eth 5000000000000000
+        uint _amount,
         address _merchantAddress,
         address _purplePayMultiSig
-    ) public view returns (address) {
+    ) public view onlyOwner returns (address) {
         bytes memory nativeContractBytecode = abi.encodePacked(
             type(NativeBurnerContract).creationCode,
             abi.encode(_amount),
@@ -79,8 +70,6 @@ contract PurplePayBurnerDeployer {
             )
         );
 
-        return (
-            address(uint160(uint(hash)))
-        );
+        return (address(uint160(uint(hash))));
     }
 }
