@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.19;
+pragma solidity ^0.8.18;
 
 import "@openzeppelin/contracts/interfaces/IERC20.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 import "./erc20burner.sol";
-import "./nativeBurner.sol";
+import "./nativeburner.sol";
 
 contract PurplePayBurnerDeployer is Ownable {
     using SafeMath for uint;
