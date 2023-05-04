@@ -1,7 +1,5 @@
 const { ethers, upgrades } = require("hardhat");
 
-console.log({ upgrades });
-
 async function main() {
 	const gas = await ethers.provider.getGasPrice();
 	const burnerContract = await ethers.getContractFactory(
@@ -9,12 +7,14 @@ async function main() {
 	);
 	console.log("Deploying PurplePayBurnerDeployer...");
 	// deploy
-	const contract = await upgrades.deployProxy(burnerContract, [10], {
-		gasPrice: gas,
-		initializer: "initialvalue",
-	});
+
+	const contract = await burnerContract.deploy();
 	await contract.deployed();
-	console.log("V1 Contract deployed to:", contract.address);
+	console.log("PurplePayBurnerDeployer deployed to:", contract.address);
+
+	// const contract = await upgrades.deployProxy(burnerContract);
+	// await contract.deployed();
+	// console.log("V1 Contract deployed to:", contract.address);
 	// upgrade
 	// let upgrade = await upgrades.upgradeProxy(UPGRADEABLE_PROXY, V2Contract, {
 	//     gasPrice: gas

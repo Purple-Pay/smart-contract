@@ -11,7 +11,7 @@ import "./nativeburner.sol";
 contract PurplePayBurnerDeployer is Ownable {
     using SafeMath for uint;
 
-    event ContractDeployed(address burnerContract);
+    event BurnerContractDeployed(address burnerContract);
 
     function deploy(
         string memory _salt,
@@ -24,14 +24,14 @@ contract PurplePayBurnerDeployer is Ownable {
             ERC20BurnerContract erc20Burner = new ERC20BurnerContract{
                 salt: bytes32(keccak256(abi.encodePacked(_salt)))
             }(_erc20Token, _amount, _merchantAddress, _purplePayMultiSig);
-            emit ContractDeployed(address(erc20Burner));
+            emit BurnerContractDeployed(address(erc20Burner));
             return address(erc20Burner);
         }
 
         NativeBurnerContract nativeBurner = new NativeBurnerContract{
             salt: bytes32(keccak256(abi.encodePacked(_salt)))
         }(_amount, _merchantAddress, _purplePayMultiSig);
-        emit ContractDeployed(address(nativeBurner));
+        emit BurnerContractDeployed(address(nativeBurner));
         return address(nativeBurner);
     }
 

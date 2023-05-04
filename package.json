@@ -6,6 +6,7 @@
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"deploy:goerli": "hardhat run --network goerli scripts/deploy.js",
+		"deploy:polygon": "hardhat run --network matic scripts/deploy.js",
 		"compile": "hardhat compile --show-stack-traces"
 	},
 	"author": "",
@@ -20,6 +21,7 @@
 		"@nomiclabs/hardhat-ethers": "^2.2.3",
 		"@nomiclabs/hardhat-etherscan": "^3.0.0",
 		"@openzeppelin/contracts": "^4.8.2",
+		"@openzeppelin/contracts-upgradeable": "^4.8.3",
 		"@openzeppelin/hardhat-upgrades": "^1.23.1",
 		"@typechain/ethers-v5": "^10.1.0",
 		"@typechain/hardhat": "^6.1.2",
