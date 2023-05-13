@@ -11,40 +11,51 @@ import "./nativeburner.sol";
 contract PurplePayBurnerDeployer is Ownable {
 	using SafeMath for uint;
 
-	event BurnerContractDeployed(
-		address burnerContract,
-		address merchantAddress
-	);
+	address public immutable nativeAddress;
+	bool public isPaused = true;
+
+	constructor(address _nativeAddress) Ownable() {
+		nativeAddress = _nativeAddress;
+		isPaused = false;
+	}
+
+	function pauseContract() public onlyOwner {
+		isPaused = true;
+	}
 
 	function deploy(
 		string memory _salt,
-		address _erc20Token,
+		address tokenAddress,
 		uint _amount,
 		address _merchantAddress,
 		address _purplePayMultiSig
 	) public onlyOwner returns (address) {
-		if (_erc20Token != address(0)) {
-			ERC20BurnerContract erc20Burner = new ERC20BurnerContract{
+		require(!isPaused, "Contract is paused");
+
+		if (tokenAddress == nativeAddress) {
+			NativeBurnerContract nativeBurner = new NativeBurnerContract{
 				salt: bytes32(keccak256(abi.encodePacked(_salt)))
-			}(_erc20Token, _amount, _merchantAddress, _purplePayMultiSig);
-			emit BurnerContractDeployed(address(erc20Burner), _merchantAddress);
-			return address(erc20Burner);
+			}(_amount, _merchantAddress, _purplePayMultiSig);
+
+			return address(nativeBurner);
 		}
 
-		NativeBurnerContract nativeBurner = new NativeBurnerContract{
+		ERC20BurnerContract erc20Burner = new ERC20BurnerContract{
 			salt: bytes32(keccak256(abi.encodePacked(_salt)))
-		}(_amount, _merchantAddress, _purplePayMultiSig);
-		emit BurnerContractDeployed(address(nativeBurner), _merchantAddress);
-		return address(nativeBurner);
+		}(tokenAddress, _amount, _merchantAddress, _purplePayMultiSig);
+
+		return address(erc20Burner);
 	}
 
 	function predictAddress(
 		string memory _salt,
-		address _erc20Token,
+		address tokenAddress,
 		uint _amount,
 		address _merchantAddress,
 		address _purplePayMultiSig
-	) public view onlyOwner returns (address) {
+	) public view returns (address) {
+		require(!isPaused, "Contract is paused");
+
 		bytes memory nativeContractBytecode = abi.encodePacked(
 			type(NativeBurnerContract).creationCode,
 			abi.encode(_amount),
@@ -54,13 +65,13 @@ contract PurplePayBurnerDeployer is Ownable {
 
 		bytes memory erc20ContractBytecode = abi.encodePacked(
 			type(ERC20BurnerContract).creationCode,
-			abi.encode(_erc20Token),
+			abi.encode(tokenAddress),
 			abi.encode(_amount),
 			abi.encode(_merchantAddress),
 			abi.encode(_purplePayMultiSig)
 		);
 
-		bytes memory contractBytecode = _erc20Token == address(0)
+		bytes memory contractBytecode = tokenAddress == nativeAddress
 			? nativeContractBytecode
 			: erc20ContractBytecode;
 

@@ -8,7 +8,9 @@ async function main() {
 	console.log("Deploying PurplePayBurnerDeployer...");
 	// deploy
 
-	const contract = await burnerContract.deploy();
+	const contract = await burnerContract.deploy(
+		"0x0000000000000000000000000000000000001010"
+	);
 	await contract.deployed();
 	console.log("PurplePayBurnerDeployer deployed to:", contract.address);
 
