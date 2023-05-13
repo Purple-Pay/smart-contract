@@ -29,3 +29,5 @@ main().catch((error) => {
 	console.error(error);
 	process.exitCode = 1;
 });
+
+// deployed contract: 0xdF8C44b8792992479165325001Ba1C5f04Bfce24

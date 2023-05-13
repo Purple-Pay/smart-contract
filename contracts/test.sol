@@ -3,7 +3,7 @@ pragma solidity ^0.8.18;
 
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
-contract PurplePayBurnerDeployer {
+contract Testing {
 	using SafeMath for uint;
 
 	address public immutable nativeAddress;
