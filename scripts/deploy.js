@@ -30,4 +30,4 @@ main().catch((error) => {
 	process.exitCode = 1;
 });
 
-// deployed contract: 0xdF8C44b8792992479165325001Ba1C5f04Bfce24
+// deployed contract: 0x93Bf72521376cE0FBce0a199498259b95F657fA8

@@ -1,9 +1,11 @@
 const { ethers } = require("hardhat");
 const chalk = require("chalk");
 
-const salt = "0000001";
+const { v4: uuidv4 } = require("uuid");
+
+let salt = "f39Fd6e51aad88F6F4ce6aB8827279cffFb92266";
 const tokenAddress = "0x0000000000000000000000000000000000001010";
-const amount = ethers.utils.parseEther("0.1");
+const amount = "10000000000000000";
 const merchantAddress = "0x107C189B0aa1C309bA65FD6fc22bE1AA513A459C";
 const purplePayAddress = "0xf229ceB323115a30EDEd92A953BA5c581e99751C";
 
@@ -40,9 +42,11 @@ const deployBurner = async (contract) => {
 
 const main = async () => {
 	try {
-		const [owner, operator] = await ethers.getSigners();
+		salt = uuidv4().replace(/-/g, "");
 
-		const address = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
+		const [owner] = await ethers.getSigners();
+
+		const address = "0xa195acceb1945163160cd5703ed43e4f78176a54";
 		const deployerContract = await ethers.getContractFactory(
 			"PurplePayBurnerDeployer"
 		);
