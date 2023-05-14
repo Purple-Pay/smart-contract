@@ -2,8 +2,6 @@ require("@openzeppelin/hardhat-upgrades");
 require("@nomicfoundation/hardhat-toolbox");
 require("dotenv").config();
 
-console.log("--> ", process.env.PRIVATE_KEY);
-
 const private_key = process.env.PRIVATE_KEY;
 
 /** @type import('hardhat/config').HardhatUserConfig */

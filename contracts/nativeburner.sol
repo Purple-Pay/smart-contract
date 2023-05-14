@@ -5,21 +5,21 @@ import "@openzeppelin/contracts/interfaces/IERC20.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
 contract NativeBurnerContract {
-    using SafeMath for uint;
+	using SafeMath for uint;
 
-    constructor(
-        uint _amount,
-        address _merchantAddress,
-        address _purplePayMultiSig
-    ) {
-        bool isPaymentCompleted = address(this).balance >= _amount;
+	constructor(
+		uint _amount,
+		address _merchantAddress,
+		address _purplePayMultiSig
+	) {
+		bool isPaymentCompleted = address(this).balance >= _amount;
 
-        require(isPaymentCompleted, "Native Burner: Payment incomplete");
+		require(isPaymentCompleted, "Native Burner: Payment incomplete");
 
-        uint purplePayFee = SafeMath.div(SafeMath.mul(_amount, 1), 100);
-        uint merchantShare = SafeMath.sub(_amount, purplePayFee);
+		uint purplePayFee = SafeMath.div(SafeMath.mul(_amount, 1), 100);
+		uint merchantShare = SafeMath.sub(_amount, purplePayFee);
 
-        payable(_purplePayMultiSig).transfer(purplePayFee);
-        payable(_merchantAddress).transfer(merchantShare);
-    }
+		payable(_purplePayMultiSig).transfer(purplePayFee);
+		payable(_merchantAddress).transfer(merchantShare);
+	}
 }

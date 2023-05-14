@@ -25,14 +25,14 @@ contract PurplePayBurnerDeployer is Ownable {
 
 	function deploy(
 		string memory _salt,
-		address tokenAddress,
+		address _tokenAddress,
 		uint _amount,
 		address _merchantAddress,
 		address _purplePayMultiSig
 	) public onlyOwner returns (address) {
 		require(!isPaused, "Contract is paused");
 
-		if (tokenAddress == nativeAddress) {
+		if (_tokenAddress == nativeAddress) {
 			NativeBurnerContract nativeBurner = new NativeBurnerContract{
 				salt: bytes32(keccak256(abi.encodePacked(_salt)))
 			}(_amount, _merchantAddress, _purplePayMultiSig);
@@ -42,14 +42,14 @@ contract PurplePayBurnerDeployer is Ownable {
 
 		ERC20BurnerContract erc20Burner = new ERC20BurnerContract{
 			salt: bytes32(keccak256(abi.encodePacked(_salt)))
-		}(tokenAddress, _amount, _merchantAddress, _purplePayMultiSig);
+		}(_tokenAddress, _amount, _merchantAddress, _purplePayMultiSig);
 
 		return address(erc20Burner);
 	}
 
 	function predictAddress(
 		string memory _salt,
-		address tokenAddress,
+		address _tokenAddress,
 		uint _amount,
 		address _merchantAddress,
 		address _purplePayMultiSig
@@ -65,13 +65,13 @@ contract PurplePayBurnerDeployer is Ownable {
 
 		bytes memory erc20ContractBytecode = abi.encodePacked(
 			type(ERC20BurnerContract).creationCode,
-			abi.encode(tokenAddress),
+			abi.encode(_tokenAddress),
 			abi.encode(_amount),
 			abi.encode(_merchantAddress),
 			abi.encode(_purplePayMultiSig)
 		);
 
-		bytes memory contractBytecode = tokenAddress == nativeAddress
+		bytes memory contractBytecode = _tokenAddress == nativeAddress
 			? nativeContractBytecode
 			: erc20ContractBytecode;
 
