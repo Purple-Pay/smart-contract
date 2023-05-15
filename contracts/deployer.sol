@@ -1,26 +1,16 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.18;
 
-import "@openzeppelin/contracts/interfaces/IERC20.sol";
-import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-import "./erc20burner.sol";
-import "./nativeburner.sol";
+import "./ERC20Burner.sol";
+import "./NativeBurner.sol";
 
-contract PurplePayBurnerDeployer is Ownable {
-	using SafeMath for uint;
-
-	address public immutable nativeAddress;
+contract PurplePay is Ownable {
 	bool public isPaused = true;
 
-	constructor(address _nativeAddress) Ownable() {
-		nativeAddress = _nativeAddress;
-		isPaused = false;
-	}
-
 	function pauseContract() public onlyOwner {
-		isPaused = true;
+		isPaused = !isPaused;
 	}
 
 	function deploy(
@@ -30,17 +20,17 @@ contract PurplePayBurnerDeployer is Ownable {
 		address _merchantAddress,
 		address _purplePayMultiSig
 	) public onlyOwner returns (address) {
-		require(!isPaused, "Contract is paused");
+		if (isPaused) revert PausedContract();
 
-		if (_tokenAddress == nativeAddress) {
-			NativeBurnerContract nativeBurner = new NativeBurnerContract{
+		if (_tokenAddress == address(0)) {
+			NativeBurner nativeBurner = new NativeBurner{
 				salt: bytes32(keccak256(abi.encodePacked(_salt)))
 			}(_amount, _merchantAddress, _purplePayMultiSig);
 
 			return address(nativeBurner);
 		}
 
-		ERC20BurnerContract erc20Burner = new ERC20BurnerContract{
+		ERC20Burner erc20Burner = new ERC20Burner{
 			salt: bytes32(keccak256(abi.encodePacked(_salt)))
 		}(_tokenAddress, _amount, _merchantAddress, _purplePayMultiSig);
 
@@ -54,24 +44,24 @@ contract PurplePayBurnerDeployer is Ownable {
 		address _merchantAddress,
 		address _purplePayMultiSig
 	) public view returns (address) {
-		require(!isPaused, "Contract is paused");
+		if (isPaused) revert PausedContract();
 
 		bytes memory nativeContractBytecode = abi.encodePacked(
-			type(NativeBurnerContract).creationCode,
+			type(NativeBurner).creationCode,
 			abi.encode(_amount),
 			abi.encode(_merchantAddress),
 			abi.encode(_purplePayMultiSig)
 		);
 
 		bytes memory erc20ContractBytecode = abi.encodePacked(
-			type(ERC20BurnerContract).creationCode,
+			type(ERC20Burner).creationCode,
 			abi.encode(_tokenAddress),
 			abi.encode(_amount),
 			abi.encode(_merchantAddress),
 			abi.encode(_purplePayMultiSig)
 		);
 
-		bytes memory contractBytecode = _tokenAddress == nativeAddress
+		bytes memory contractBytecode = _tokenAddress == address(0)
 			? nativeContractBytecode
 			: erc20ContractBytecode;
 

@@ -5,11 +5,12 @@
 	"main": "index.js",
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
+		"start": "hardhat node",
 		"deploy:goerli": "hardhat run --network goerli scripts/deploy.js",
 		"deploy:polygon": "hardhat run --network matic scripts/deploy.js",
 		"deploy:mumbai": "hardhat run --network mumbai scripts/deploy.js",
 		"deploy:local": "hardhat run --network localhost scripts/deploy.js",
-		"run:local": "nodemon hardhat run --network localhost scripts/e2e.js",
+		"run:local": "hardhat run --network localhost scripts/e2e.js",
 		"compile": "hardhat compile --show-stack-traces"
 	},
 	"author": "",
