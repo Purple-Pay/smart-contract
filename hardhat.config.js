@@ -13,7 +13,7 @@ module.exports = {
 			accounts: [private_key],
 		},
 		matic: {
-			url: `https://rpc-mainnet.maticvigil.com/v1/`,
+			url: `https://polygon.llamarpc.com`,
 			accounts: [private_key],
 		},
 		mumbai: {
@@ -25,6 +25,7 @@ module.exports = {
 		apiKey: {
 			goerli: "I3542R4GUIGY42EGBWUTPAKHEI33UDYGVQ",
 			polygonMumbai: "6U5Q2T3HVNYVAVKFMXID47H5F9JRJ3KDNB",
+			polygon: "6U5Q2T3HVNYVAVKFMXID47H5F9JRJ3KDNB",
 		},
 	},
 };
