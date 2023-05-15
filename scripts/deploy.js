@@ -30,5 +30,5 @@ main().catch((error) => {
 	process.exitCode = 1;
 });
 
-// deployed contract: polygon 0x93Bf72521376cE0FBce0a199498259b95F657fA8
+// deployed contract: polygon 0xD5Dc6BFd372FD954096acbE3447fda252550F0D9
 // mumbai: 0xb46b51094090062712b504b1d7d9df85990cc6f7
