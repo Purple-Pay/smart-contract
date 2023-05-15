@@ -14,25 +14,6 @@
 		"anonymous": false,
 		"inputs": [
 			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "burnerContract",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "merchantAddress",
-				"type": "address"
-			}
-		],
-		"name": "BurnerContractDeployed",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
 				"indexed": true,
 				"internalType": "address",
 				"name": "previousOwner",
@@ -57,7 +38,7 @@
 			},
 			{
 				"internalType": "address",
-				"name": "tokenAddress",
+				"name": "_tokenAddress",
 				"type": "address"
 			},
 			{
@@ -142,7 +123,7 @@
 			},
 			{
 				"internalType": "address",
-				"name": "tokenAddress",
+				"name": "_tokenAddress",
 				"type": "address"
 			},
 			{
