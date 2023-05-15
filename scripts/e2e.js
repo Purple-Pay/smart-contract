@@ -4,15 +4,19 @@ const chalk = require("chalk");
 const { v4: uuidv4 } = require("uuid");
 
 let salt = "f39Fd6e51aad88F6F4ce6aB8827279cffFb92266";
-const tokenAddress = "0x0000000000000000000000000000000000001010";
+const tokenAddress = "0x0000000000000000000000000000000000000000";
 const amount = "10000000000000000";
 const merchantAddress = "0x107C189B0aa1C309bA65FD6fc22bE1AA513A459C";
 const purplePayAddress = "0xf229ceB323115a30EDEd92A953BA5c581e99751C";
 
 const getBalance = async (address, label) => {
 	const balance = await ethers.provider.getBalance(address);
-	console.log(`Balance of ${label}`);
-	console.log(`${address}: ${ethers.utils.formatEther(balance)}`);
+	console.log(chalk.yellow(`Balance of ${label}`));
+	console.log(
+		chalk.blue(`${address}`) +
+			": " +
+			chalk.green(`${ethers.utils.formatEther(balance)}`)
+	);
 	console.log(``);
 };
 
@@ -46,11 +50,16 @@ const main = async () => {
 
 		const [owner] = await ethers.getSigners();
 
-		const address = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
-		const deployerContract = await ethers.getContractFactory(
-			"PurplePayBurnerDeployer"
-		);
+		const address = "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9";
+		const deployerContract = await ethers.getContractFactory("PurplePay");
 		const contract = deployerContract.attach(address);
+
+		const isPaused = await contract.isPaused();
+
+		if (isPaused) {
+			console.log(chalk.red("Contract is paused"));
+			await contract.pauseContract();
+		}
 
 		// balance of owner address
 		await getBalance(owner.address, "Owner address");

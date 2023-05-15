@@ -3,11 +3,10 @@ pragma solidity ^0.8.18;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-import "./erc20burner.sol";
-import "./nativeburner.sol";
-import "./errors.sol";
+import "./ERC20Burner.sol";
+import "./NativeBurner.sol";
 
-contract PurplePayBurnerDeployer is Ownable {
+contract PurplePay is Ownable {
 	bool public isPaused = true;
 
 	function pauseContract() public onlyOwner {
@@ -24,14 +23,14 @@ contract PurplePayBurnerDeployer is Ownable {
 		if (isPaused) revert PausedContract();
 
 		if (_tokenAddress == address(0)) {
-			NativeBurnerContract nativeBurner = new NativeBurnerContract{
+			NativeBurner nativeBurner = new NativeBurner{
 				salt: bytes32(keccak256(abi.encodePacked(_salt)))
 			}(_amount, _merchantAddress, _purplePayMultiSig);
 
 			return address(nativeBurner);
 		}
 
-		ERC20BurnerContract erc20Burner = new ERC20BurnerContract{
+		ERC20Burner erc20Burner = new ERC20Burner{
 			salt: bytes32(keccak256(abi.encodePacked(_salt)))
 		}(_tokenAddress, _amount, _merchantAddress, _purplePayMultiSig);
 
@@ -48,14 +47,14 @@ contract PurplePayBurnerDeployer is Ownable {
 		if (isPaused) revert PausedContract();
 
 		bytes memory nativeContractBytecode = abi.encodePacked(
-			type(NativeBurnerContract).creationCode,
+			type(NativeBurner).creationCode,
 			abi.encode(_amount),
 			abi.encode(_merchantAddress),
 			abi.encode(_purplePayMultiSig)
 		);
 
 		bytes memory erc20ContractBytecode = abi.encodePacked(
-			type(ERC20BurnerContract).creationCode,
+			type(ERC20Burner).creationCode,
 			abi.encode(_tokenAddress),
 			abi.encode(_amount),
 			abi.encode(_merchantAddress),

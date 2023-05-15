@@ -2,9 +2,9 @@
 pragma solidity ^0.8.18;
 
 import "@openzeppelin/contracts/interfaces/IERC20.sol";
-import "./errors.sol";
+import "./Errors.sol";
 
-contract NativeBurnerContract {
+contract NativeBurner {
 	constructor(
 		uint256 _amount,
 		address _merchantAddress,
