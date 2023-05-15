@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.18;
 
-import "@openzeppelin/contracts/interfaces/IERC20.sol";
-import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 import "./erc20burner.sol";
@@ -10,15 +8,7 @@ import "./nativeburner.sol";
 import "./errors.sol";
 
 contract PurplePayBurnerDeployer is Ownable {
-	using SafeMath for uint;
-
-	address public immutable nativeAddress;
 	bool public isPaused = true;
-
-	constructor(address _nativeAddress) Ownable() {
-		nativeAddress = _nativeAddress;
-		isPaused = false;
-	}
 
 	function pauseContract() public onlyOwner {
 		isPaused = !isPaused;
@@ -33,7 +23,7 @@ contract PurplePayBurnerDeployer is Ownable {
 	) public onlyOwner returns (address) {
 		if (isPaused) revert PausedContract();
 
-		if (_tokenAddress == nativeAddress) {
+		if (_tokenAddress == address(0)) {
 			NativeBurnerContract nativeBurner = new NativeBurnerContract{
 				salt: bytes32(keccak256(abi.encodePacked(_salt)))
 			}(_amount, _merchantAddress, _purplePayMultiSig);
@@ -72,7 +62,7 @@ contract PurplePayBurnerDeployer is Ownable {
 			abi.encode(_purplePayMultiSig)
 		);
 
-		bytes memory contractBytecode = _tokenAddress == nativeAddress
+		bytes memory contractBytecode = _tokenAddress == address(0)
 			? nativeContractBytecode
 			: erc20ContractBytecode;
 

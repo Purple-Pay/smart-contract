@@ -7,7 +7,7 @@ import "./errors.sol";
 contract ERC20BurnerContract {
 	constructor(
 		address _tokenAddress,
-		uint _amount,
+		uint256 _amount,
 		address _merchantAddress,
 		address _purplePayMultiSig
 	) {
@@ -17,8 +17,8 @@ contract ERC20BurnerContract {
 			revert InsufficientBalance(token.balanceOf(address(this)), _amount);
 		}
 
-		uint purplePayFee = _amount / 100;
-		uint merchantShare = _amount - purplePayFee;
+		uint256 purplePayFee = _amount / 100;
+		uint256 merchantShare = _amount - purplePayFee;
 
 		token.transfer(_purplePayMultiSig, purplePayFee);
 		token.transfer(_merchantAddress, merchantShare);
