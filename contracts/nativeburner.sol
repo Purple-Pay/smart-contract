@@ -2,32 +2,33 @@
 pragma solidity ^0.8.18;
 
 import "@openzeppelin/contracts/interfaces/IERC20.sol";
-import "@openzeppelin/contracts/utils/math/SafeMath.sol";
+import "./errors.sol";
 
 contract NativeBurnerContract {
-	using SafeMath for uint;
-
 	constructor(
-		uint _amount,
+		uint256 _amount,
 		address _merchantAddress,
 		address _purplePayMultiSig
 	) {
-		bool isPaymentCompleted = address(this).balance >= _amount;
+		if (address(this).balance < _amount) {
+			revert InsufficientBalance(address(this).balance, _amount);
+		}
 
-		require(isPaymentCompleted, "Native Burner: Payment incomplete");
+		uint256 purplePayFee = _amount / 100;
+		uint256 merchantShare = _amount - purplePayFee;
 
-		uint purplePayFee = SafeMath.div(SafeMath.mul(_amount, 1), 100);
-		uint merchantShare = SafeMath.sub(_amount, purplePayFee);
+		(bool feeSent, ) = _purplePayMultiSig.call{value: purplePayFee}("");
 
-		(bool sent, ) = _purplePayMultiSig.call{value: purplePayFee}("");
+		if (!feeSent) {
+			revert FailedToDisperseFund(merchantShare, _merchantAddress);
+		}
 
-		require(sent, "Native Burner: Failed to send fee to PurplePay");
-
-		(bool merchantSent, ) = _merchantAddress.call{value: merchantShare}("");
-
-		require(
-			merchantSent,
-			"Native Burner: Failed to send share to merchant"
+		(bool settlementSent, ) = _merchantAddress.call{value: merchantShare}(
+			""
 		);
+
+		if (!settlementSent) {
+			revert FailedToDisperseFund(merchantShare, _merchantAddress);
+		}
 	}
 }

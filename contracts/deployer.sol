@@ -7,6 +7,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 import "./erc20burner.sol";
 import "./nativeburner.sol";
+import "./errors.sol";
 
 contract PurplePayBurnerDeployer is Ownable {
 	using SafeMath for uint;
@@ -20,7 +21,7 @@ contract PurplePayBurnerDeployer is Ownable {
 	}
 
 	function pauseContract() public onlyOwner {
-		isPaused = true;
+		isPaused = !isPaused;
 	}
 
 	function deploy(
@@ -30,7 +31,7 @@ contract PurplePayBurnerDeployer is Ownable {
 		address _merchantAddress,
 		address _purplePayMultiSig
 	) public onlyOwner returns (address) {
-		require(!isPaused, "Contract is paused");
+		if (isPaused) revert PausedContract();
 
 		if (_tokenAddress == nativeAddress) {
 			NativeBurnerContract nativeBurner = new NativeBurnerContract{
@@ -54,7 +55,7 @@ contract PurplePayBurnerDeployer is Ownable {
 		address _merchantAddress,
 		address _purplePayMultiSig
 	) public view returns (address) {
-		require(!isPaused, "Contract is paused");
+		if (isPaused) revert PausedContract();
 
 		bytes memory nativeContractBytecode = abi.encodePacked(
 			type(NativeBurnerContract).creationCode,

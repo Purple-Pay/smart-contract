@@ -46,7 +46,7 @@ const main = async () => {
 
 		const [owner] = await ethers.getSigners();
 
-		const address = "0xa195acceb1945163160cd5703ed43e4f78176a54";
+		const address = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
 		const deployerContract = await ethers.getContractFactory(
 			"PurplePayBurnerDeployer"
 		);
