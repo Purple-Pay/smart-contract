@@ -2,7 +2,7 @@
 pragma solidity ^0.8.18;
 
 import "@openzeppelin/contracts/interfaces/IERC20.sol";
-import "./Errors.sol";
+import "./errors.sol";
 
 contract NativeBurner {
 	constructor(
