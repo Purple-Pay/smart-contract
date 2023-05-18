@@ -20,6 +20,11 @@ module.exports = {
 			url: "https://rpc.ankr.com/polygon_mumbai",
 			accounts: [private_key],
 		},
+		shibuya: {
+			url: "https://evm.shibuya.astar.network",
+			chainId: 81,
+			accounts: [private_key],
+		},
 	},
 	etherscan: {
 		apiKey: {
