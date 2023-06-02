@@ -78,14 +78,11 @@ contract CrossChainKYCPOC {
 
 		// hashedChain is using address instead of string
 		// address => string before hashing
-		// bytes memory hashedChain = abi.encode(
-		// 	_parent_chain,
-		// 	abi.encodePacked(msg.sender)
-		// );
+		bytes memory hashedChain = abi.encode(_parent_chain, msg.sender);
 
-		bytes[] memory multi_chain_address = new bytes[](0);
+		bytes[] memory multi_chain_address = new bytes[](1);
 
-		// multi_chain_address[0] = hashedChain;
+		multi_chain_address[0] = hashedChain;
 
 		IDStruct memory id = IDStruct(
 			nameHash,
@@ -122,5 +119,11 @@ contract CrossChainKYCPOC {
 		bytes memory _hash
 	) external pure returns (string memory chain, string memory user_address) {
 		(chain, user_address) = abi.decode(_hash, (string, string));
+	}
+
+	function decodeRegisteringChain(
+		bytes memory _hash
+	) external pure returns (string memory chain, address user_address) {
+		(chain, user_address) = abi.decode(_hash, (string, address));
 	}
 }

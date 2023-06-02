@@ -1,7 +1,7 @@
 const { ethers } = require("hardhat");
 const chalk = require("chalk");
 
-const logger = (label, data) => {
+const logger = (label, data = "") => {
 	console.log("");
 	console.log("====================================");
 	console.log(chalk.yellow(label));
@@ -17,6 +17,8 @@ const storeIDOnChain = async (contract, name, chain) => {
 	const res = await contract.storeID(name, chain);
 
 	console.log(chalk.green("Stored ID on chain..."));
+
+	logger("Stored ID on chain", { name, chain });
 
 	return res;
 };
@@ -80,7 +82,7 @@ const main = async () => {
 	try {
 		const [owner] = await ethers.getSigners();
 
-		const address = "0x51a1ceb83b83f1985a81c295d1ff28afef186e02";
+		const address = "0xaa292e8611adf267e563f334ee42320ac96d0463";
 		const deployerContract = await ethers.getContractFactory(
 			"CrossChainKYCPOC"
 		);
@@ -101,9 +103,14 @@ const main = async () => {
 		const newAddress = "0x5fc8d32690cc91d4c39d9d3abcbd16989f875707";
 		await addChain(contract, name, parentChain, newChain, newAddress);
 
+		logger("Clone data from Polygon to Ethereum's SC");
+
 		const newChain1 = "solana";
 		const newAddress1 = "0x5fc8d32690cc91d4c39d9d3abcbd16989f875707123";
 		await addChain(contract, name, parentChain, newChain1, newAddress1);
+
+		logger("Clone data from Polygon to Solana's SC");
+		logger("Update existing Ethereum's SC with the Solana being added");
 
 		const [nameHash, ad, data, chains] = await getID(
 			contract,
@@ -111,13 +118,20 @@ const main = async () => {
 			parentChain
 		);
 
-		const allChains = chains.map(
-			async (hash) => await contract.decodeChain(hash)
+		const [registeringChainData, ...otherChains] = chains;
+
+		const registeringChain = await contract.decodeRegisteringChain(
+			registeringChainData
 		);
 
+		logger("Registering chain", registeringChain);
+
+		const allChains = otherChains.map(
+			async (hash) => await contract.decodeChain(hash)
+		);
 		const response = await Promise.all(allChains);
 
-		logger("Decoded chain", response);
+		logger("Other chains", response);
 	} catch (error) {
 		console.error(error);
 	}
