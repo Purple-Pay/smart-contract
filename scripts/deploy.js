@@ -2,7 +2,7 @@ const { ethers, upgrades } = require("hardhat");
 
 async function main() {
 	const gas = await ethers.provider.getGasPrice();
-	const burnerContract = await ethers.getContractFactory("PurplePay");
+	const burnerContract = await ethers.getContractFactory("CrossChainKYCPOC");
 	console.log("Deploying PurplePay...");
 	// deploy
 
