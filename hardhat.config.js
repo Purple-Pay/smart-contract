@@ -25,6 +25,11 @@ module.exports = {
 			chainId: 81,
 			accounts: [private_key],
 		},
+		astar: {
+			url: "https://astar.public.blastapi.io",
+			chainId: 592,
+			accounts: [private_key],
+		},
 	},
 	etherscan: {
 		apiKey: {
