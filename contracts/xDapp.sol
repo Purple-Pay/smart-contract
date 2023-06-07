@@ -4,62 +4,72 @@ pragma solidity >=0.7.0 <0.9.0;
 
 contract CrossChainKYCPOC {
 	struct IDStruct {
-		bytes32 namehash;
+		bytes namehash;
 		address sender_address;
 		bytes serialisedData;
 		bytes[] multi_chain_address;
 	}
 
-	mapping(bytes32 => IDStruct) db; //mapping of nameHash => ID
+	mapping(bytes => IDStruct) db; //mapping of nameHash => ID
+	mapping(address => bytes) reverseDBMapping;
 
 	function isSenderRegistered(
 		string memory _name,
 		string memory _chain
 	) public view returns (bool) {
-		bytes32 nameHash = computeNameChainhash(_name, _chain);
+		bytes memory nameHash = computeNameChainhash(_name, _chain);
 		if (db[nameHash].sender_address == msg.sender) {
 			return true;
 		}
 		return false;
 	}
 
-	function computeNameHash(
-		string memory _name
-	) internal pure returns (bytes32) {
-		return keccak256(abi.encodePacked(_name));
-	}
+	// function computeNameHash(
+	// 	string memory _name
+	// ) internal pure returns (bytes memory) {
+	// 	return keccak256(abi.encodePacked(_name));
+	// }
 
 	function computeNameChainhash(
 		string memory _name,
 		string memory _chain
-	) internal pure returns (bytes32 namehash) {
-		namehash = keccak256(
-			abi.encodePacked(namehash, keccak256(abi.encodePacked(_name)))
-		);
-		namehash = keccak256(
-			abi.encodePacked(namehash, keccak256(abi.encodePacked(_chain)))
-		);
+	) internal pure returns (bytes memory namehash) {
+		// namehash = keccak256(
+		// 	abi.encodePacked(namehash, keccak256(abi.encodePacked(_name)))
+		// );
+		// namehash = keccak256(
+		// 	abi.encodePacked(namehash, keccak256(abi.encodePacked(_chain)))
+		// );
+
+		namehash = abi.encode(_name, _chain);
 	}
 
 	function getNameHash(
 		string memory _name,
 		string memory _chain
-	) external pure returns (bytes32) {
+	) external pure returns (bytes memory) {
 		return computeNameChainhash(_name, _chain);
 	}
 
-	function getID(bytes32 nameHash) external view returns (IDStruct memory) {
+	function getID(
+		bytes memory nameHash
+	) external view returns (IDStruct memory) {
 		return db[nameHash];
 	}
 
 	function getSerialisedID(
-		bytes32 nameHash
+		bytes memory nameHash
 	) external view returns (bytes memory) {
 		return db[nameHash].serialisedData;
 	}
 
 	function decode(bytes memory _data) external pure returns (string memory) {
 		return abi.decode(_data, (string));
+	}
+
+	function fetchIDFromAddress() public view returns (IDStruct memory userID) {
+		bytes memory nameHash = reverseDBMapping[msg.sender];
+		return db[nameHash];
 	}
 
 	function storeID(
@@ -72,7 +82,7 @@ contract CrossChainKYCPOC {
 			revert("Sender already registered");
 		}
 
-		bytes32 nameHash = computeNameChainhash(_name, _parent_chain);
+		bytes memory nameHash = computeNameChainhash(_name, _parent_chain);
 
 		bytes memory serialisedData = abi.encode(_name); // other identity data
 
@@ -91,6 +101,7 @@ contract CrossChainKYCPOC {
 			multi_chain_address
 		);
 		db[nameHash] = id;
+		reverseDBMapping[msg.sender] = nameHash;
 
 		return id;
 	}
@@ -101,7 +112,7 @@ contract CrossChainKYCPOC {
 		string memory _new_chain,
 		string memory _new_chain_address
 	) external {
-		bytes32 nameHash = computeNameChainhash(_name, _registered_chain);
+		bytes memory nameHash = computeNameChainhash(_name, _registered_chain);
 
 		if (db[nameHash].sender_address != msg.sender) {
 			revert("Sender not registered");

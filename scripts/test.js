@@ -82,7 +82,7 @@ const main = async () => {
 	try {
 		const [owner] = await ethers.getSigners();
 
-		const address = "0xaa292e8611adf267e563f334ee42320ac96d0463";
+		const address = "0x5067457698fd6fa1c6964e416b3f42713513b3dd";
 		const deployerContract = await ethers.getContractFactory(
 			"CrossChainKYCPOC"
 		);
