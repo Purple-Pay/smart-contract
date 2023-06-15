@@ -25,6 +25,16 @@ module.exports = {
 			chainId: 81,
 			accounts: [private_key],
 		},
+		astar: {
+			url: "https://astar.public.blastapi.io",
+			chainId: 592,
+			accounts: [private_key],
+		},
+		shiden: {
+			url: "https://evm.shiden.astar.network",
+			chainId: 336,
+			accounts: [private_key],
+		},
 	},
 	etherscan: {
 		apiKey: {
@@ -33,4 +43,14 @@ module.exports = {
 			polygon: "6U5Q2T3HVNYVAVKFMXID47H5F9JRJ3KDNB",
 		},
 	},
+	customChains: [
+		{
+			network: "astar",
+			chainId: 592,
+			urls: {
+				apiURL: "https://astar.public.blastapi.io",
+				browserURL: "https://astar.subscan.io",
+			},
+		},
+	],
 };

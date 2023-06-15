@@ -74,7 +74,8 @@ contract CrossChainKYCPOC {
 
 	function storeID(
 		string memory _name,
-		string memory _parent_chain
+		string memory _parent_chain,
+		string memory _data
 	) external returns (IDStruct memory) {
 		bool isRegistered = isSenderRegistered(_name, _parent_chain);
 
@@ -84,7 +85,7 @@ contract CrossChainKYCPOC {
 
 		bytes memory nameHash = computeNameChainhash(_name, _parent_chain);
 
-		bytes memory serialisedData = abi.encode(_name); // other identity data
+		bytes memory serialisedData = abi.encode(_data); // other identity data
 
 		// hashedChain is using address instead of string
 		// address => string before hashing

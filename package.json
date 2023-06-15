@@ -11,6 +11,7 @@
 		"deploy:mumbai": "hardhat run --network mumbai scripts/deploy.js",
 		"deploy:local": "hardhat run --network localhost scripts/deploy.js",
 		"deploy:shibuya": "hardhat run --network shibuya scripts/deploy.js",
+		"deploy:astar": "hardhat run --network astar scripts/deploy.js",
 		"run:local": "hardhat run --network localhost scripts/test.js",
 		"compile": "hardhat compile --show-stack-traces"
 	},
@@ -28,6 +29,7 @@
 		"@openzeppelin/contracts": "^4.8.2",
 		"@openzeppelin/contracts-upgradeable": "^4.8.3",
 		"@openzeppelin/hardhat-upgrades": "^1.23.1",
+		"@truffle/hdwallet-provider": "^2.1.12",
 		"@typechain/ethers-v5": "^10.1.0",
 		"@typechain/hardhat": "^6.1.2",
 		"@types/chai": "^4.2.0",
