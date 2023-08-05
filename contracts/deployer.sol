@@ -3,8 +3,8 @@ pragma solidity ^0.8.18;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-import "./ERC20Burner.sol";
-import "./NativeBurner.sol";
+import "./erc20burner.sol";
+import "./nativeburner.sol";
 
 contract PurplePay is Ownable {
 	bool public isPaused = true;
