@@ -9,6 +9,7 @@
 		"deploy:goerli": "hardhat run --network goerli scripts/deploy.js",
 		"deploy:polygon": "hardhat run --network matic scripts/deploy.js",
 		"deploy:mumbai": "hardhat run --network mumbai scripts/deploy.js",
+		"deploy:mantleTestnet": "hardhat run --network mantleTestnet scripts/deploy.js",
 		"deploy:local": "hardhat run --network localhost scripts/deploy.js",
 		"deploy:shibuya": "hardhat run --network shibuya scripts/deploy.js",
 		"deploy:astar": "hardhat run --network astar scripts/deploy.js",
