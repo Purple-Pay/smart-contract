@@ -14,7 +14,10 @@
 		"deploy:shibuya": "hardhat run --network shibuya scripts/deploy.js",
 		"deploy:astar": "hardhat run --network astar scripts/deploy.js",
 		"run:local": "hardhat run --network localhost scripts/test.js",
-		"compile": "hardhat compile --show-stack-traces"
+		"compile": "hardhat compile --show-stack-traces",
+		"wormholeDeploy:celoTestnet": "hardhat run --network celoTestnet scripts/wormholeDeploy.js",
+		"wormholeDeploy:mumbai": "hardhat run --network mumbai scripts/wormholeDeploy.js",
+		"wormholeTest": "hardhat run --network mumbai scripts/testingWormholeDataTransfer.js"
 	},
 	"author": "",
 	"license": "ISC",
@@ -23,6 +26,7 @@
 		"hardhat": "^2.13.0"
 	},
 	"dependencies": {
+		"@certusone/wormhole-sdk": "^0.9.20",
 		"@nomicfoundation/hardhat-chai-matchers": "^1.0.0",
 		"@nomicfoundation/hardhat-network-helpers": "^1.0.0",
 		"@nomiclabs/hardhat-ethers": "^2.2.3",

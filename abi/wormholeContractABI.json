@@ -1,0 +1,212 @@
+[
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_wormholeRelayer",
+				"type": "address"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"components": [
+					{
+						"internalType": "bytes",
+						"name": "namehash",
+						"type": "bytes"
+					},
+					{
+						"internalType": "address",
+						"name": "sender_address",
+						"type": "address"
+					},
+					{
+						"internalType": "bytes",
+						"name": "serialisedData",
+						"type": "bytes"
+					},
+					{
+						"internalType": "bytes[]",
+						"name": "multi_chain_address",
+						"type": "bytes[]"
+					}
+				],
+				"indexed": false,
+				"internalType": "struct SimpleDataTransfer.IDStruct",
+				"name": "identity",
+				"type": "tuple"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint16",
+				"name": "senderChain",
+				"type": "uint16"
+			},
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "sender",
+				"type": "address"
+			}
+		],
+		"name": "IdentityReceived",
+		"type": "event"
+	},
+	{
+		"inputs": [],
+		"name": "latestIdentityRecieved",
+		"outputs": [
+			{
+				"internalType": "bytes",
+				"name": "namehash",
+				"type": "bytes"
+			},
+			{
+				"internalType": "address",
+				"name": "sender_address",
+				"type": "address"
+			},
+			{
+				"internalType": "bytes",
+				"name": "serialisedData",
+				"type": "bytes"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint16",
+				"name": "targetChain",
+				"type": "uint16"
+			}
+		],
+		"name": "quoteCrossChainGreeting",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "cost",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "bytes",
+				"name": "payload",
+				"type": "bytes"
+			},
+			{
+				"internalType": "bytes[]",
+				"name": "",
+				"type": "bytes[]"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "",
+				"type": "bytes32"
+			},
+			{
+				"internalType": "uint16",
+				"name": "sourceChain",
+				"type": "uint16"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "deliveryHash",
+				"type": "bytes32"
+			}
+		],
+		"name": "receiveWormholeMessages",
+		"outputs": [],
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "bytes32",
+				"name": "",
+				"type": "bytes32"
+			}
+		],
+		"name": "seenDeliveryVaaHashes",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint16",
+				"name": "targetChain",
+				"type": "uint16"
+			},
+			{
+				"internalType": "address",
+				"name": "targetAddress",
+				"type": "address"
+			},
+			{
+				"components": [
+					{
+						"internalType": "bytes",
+						"name": "namehash",
+						"type": "bytes"
+					},
+					{
+						"internalType": "address",
+						"name": "sender_address",
+						"type": "address"
+					},
+					{
+						"internalType": "bytes",
+						"name": "serialisedData",
+						"type": "bytes"
+					},
+					{
+						"internalType": "bytes[]",
+						"name": "multi_chain_address",
+						"type": "bytes[]"
+					}
+				],
+				"internalType": "struct SimpleDataTransfer.IDStruct",
+				"name": "identity",
+				"type": "tuple"
+			}
+		],
+		"name": "sendCrossChainIdentity",
+		"outputs": [],
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "wormholeRelayer",
+		"outputs": [
+			{
+				"internalType": "contract IWormholeRelayer",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	}
+]
