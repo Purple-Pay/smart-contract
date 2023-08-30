@@ -12,13 +12,16 @@ contract SimpleDataTransfer is IWormholeReceiver {
 		bytes[] multi_chain_address;
 	}
 
-    event IdentityReceived(IDStruct identity, uint16 senderChain, address sender);
+    // fallback() external payable{ }
 
-    uint256 constant GAS_LIMIT = 50_000;
+    event IdentityReceived(IDStruct identityString, uint16 senderChain, address sender);
+
+    uint256 constant GAS_LIMIT = 500_000;
 
     IWormholeRelayer public immutable wormholeRelayer;
 
-    IDStruct public latestIdentityRecieved;
+    // IDStruct public latestIdentityRecieved;
+    IDStruct latestIdentityString;
 
     constructor(address _wormholeRelayer) {
         wormholeRelayer = IWormholeRelayer(_wormholeRelayer);
@@ -57,8 +60,12 @@ contract SimpleDataTransfer is IWormholeReceiver {
 
         // Parse the payload and do the corresponding actions!
         (IDStruct memory identity, address sender) = abi.decode(payload, (IDStruct, address));
-        latestIdentityRecieved = identity;
-        emit IdentityReceived(latestIdentityRecieved, sourceChain, sender);
+        latestIdentityString = identity;
+        emit IdentityReceived(latestIdentityString, sourceChain, sender);
+    }
+
+    function viewLatestIdentity() external view returns(IDStruct memory) {
+        return latestIdentityString;
     }
 
 }

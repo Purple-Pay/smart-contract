@@ -5,7 +5,7 @@ import "./IWormholeRelayer.sol";
 import "./IWormholeReceiver.sol";
 
 
-contract HelloWormhole is IWormholeReceiver {
+contract CrossChainIdentityPOC is IWormholeReceiver {
     struct IDStruct {
 		bytes namehash;
 		address sender_address;
@@ -14,7 +14,7 @@ contract HelloWormhole is IWormholeReceiver {
 	}
 
 	mapping(bytes => IDStruct) db; //mapping of nameHash => ID
-	mapping(address => bytes) reverseDBMapping;
+	mapping(address => bytes) reverseDBMapping; //exists only on main chain!
     
     //****************************FUNCTIONS FOR NAMESPACE AND DATA ADDITION*************************/
 	function isSenderRegistered(string memory _name,string memory _chain) public view returns (bool) {
@@ -115,24 +115,21 @@ contract HelloWormhole is IWormholeReceiver {
     //************************************** Wormhole Part ****************************************************** */    
     event IDSynced(IDStruct greeting, uint16 senderChain, address sender);
 
-    uint256 constant GAS_LIMIT = 50_000;
+    uint256 constant GAS_LIMIT = 500_000;
 
     IWormholeRelayer public immutable wormholeRelayer;
-
-    //TODO: Replace this with the datapacket that we want to send 
-    // string public latestGreeting;
 
     constructor(address _wormholeRelayer) {
         wormholeRelayer = IWormholeRelayer(_wormholeRelayer);
     }
 
-    function quoteCrossChainGreeting(uint16 targetChain) public view returns (uint256 cost) {
+    function quoteCrossChainIdentitySyncPrice(uint16 targetChain) public view returns (uint256 cost) {
         (cost,) = wormholeRelayer.quoteEVMDeliveryPrice(targetChain, 0, GAS_LIMIT);
     }
-
-    function sendCrossChainGreeting(uint16 targetChain, address targetAddress, bytes memory nameHash) public payable {
-        //TODO: can replace namehash using msg.sender
-        uint256 cost = quoteCrossChainGreeting(targetChain);
+ 
+    function syncCrossChainIdentity(uint16 targetChain, address targetAddress) public payable {
+        bytes memory nameHash = reverseDBMapping[msg.sender];
+        uint256 cost = quoteCrossChainIdentitySyncPrice(targetChain);
         require(msg.value == cost);
         IDStruct memory structToForward = db[nameHash];
         wormholeRelayer.sendPayloadToEvm{value: cost}(
@@ -160,9 +157,9 @@ contract HelloWormhole is IWormholeReceiver {
         seenDeliveryVaaHashes[deliveryHash] = true;
 
         // Parse the payload and do the corresponding actions!
-        (IDStruct memory greeting, address sender) = abi.decode(payload, (IDStruct, address));
-        bytes memory nameHash = greeting.namehash;
-        db[nameHash] = greeting;
+        (IDStruct memory identity, address sender) = abi.decode(payload, (IDStruct, address));
+        bytes memory nameHash = identity.namehash;
+        db[nameHash] = identity;
         emit IDSynced(db[nameHash], sourceChain, sender);
     }
 

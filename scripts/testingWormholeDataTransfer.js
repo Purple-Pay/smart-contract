@@ -2,6 +2,10 @@ const { ethers, upgrades } = require("hardhat");
 const { tryNativeToHexString, CHAINS } = require("@certusone/wormhole-sdk");
 const { networks } = require("../hardhat.config");
 const abi = require("../abi/wormholeContractABI.json");
+const { Signer } = require("ethers");
+const { ethers_contracts } = require("@certusone/wormhole-sdk");
+
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const chainIdToWormholeCoreAddress = {
 	80001: "0x0CBE91CF822c73C2315FB05100C2F714765d5c20",
@@ -30,8 +34,10 @@ const sendDataPacket = async () => {
 		multi_chain_address: [],
 	};
 
+	// const dataPacket = "HELLO WORLD";
+
 	const fromChainContractAddress =
-		"0x2882726d9515bf551992B3557FDB07fDeD900e44"; //mumbai
+		"0x45C15238923B8F0EA76FfECB3493dFad8F0fF0B7"; //mumbai
 	const providerPolygon = new ethers.providers.JsonRpcProvider(
 		"https://polygon-testnet.public.blastapi.io"
 	);
@@ -39,22 +45,28 @@ const sendDataPacket = async () => {
 		process.env.PRIVATE_KEY,
 		providerPolygon
 	);
+
+	// console.log({ walletPolygon });
 	const fromChainSimpleWormholeContract = new ethers.Contract(
 		fromChainContractAddress,
 		abi,
 		providerPolygon
 	);
 
+	// console.log({ fromChainSimpleWormholeContract });
+
 	const providerCelo = new ethers.providers.JsonRpcProvider(
 		"https://alfajores-forno.celo-testnet.org"
 	);
 	const walletCelo = new ethers.Wallet(process.env.PRIVATE_KEY, providerCelo);
-	const toChainContractAddress = "0x4DF706A2d818D7e6b3dBc19C088eB14960280CcC"; //celo testnet
+	const toChainContractAddress = "0xBe76D1Dd5da171F9814c6Bfa28ac0A0fA95382b7"; //celo testnet
 	const toChainSimpleWormholeContract = new ethers.Contract(
 		toChainContractAddress,
 		abi,
 		providerCelo
 	);
+
+	// console.log({ toChainSimpleWormholeContract });
 
 	console.log("GOT CONTRACTS");
 
@@ -68,16 +80,24 @@ const sendDataPacket = async () => {
 		)} testnet Polygon Mumbai`
 	);
 	console.log(`Sending dataPacket: ${dataPacket}`);
+	// console.log(fromChainSimpleWormholeContract);
+	// console.log(walletPolygon);
+	// console.log(toChainContractAddress);
 	const tx = await fromChainSimpleWormholeContract
 		.connect(walletPolygon)
-		.sendCrossChainIdentity(toChainId, toChainContractAddress, dataPacket, {
+		.sendCrossChainIdentity(14, toChainContractAddress, dataPacket, {
 			value: cost,
-			gasLimit: 50000,
+			gasLimit: 500000,
 		});
-	console.log(`Transaction hash: ${tx.hash}`);
-	const rx = await tx.wait();
 
-	const deliveryHash = await getDeliveryHash(rx, fromChainId, provider);
+	const rx = await tx.wait();
+	console.log(`Transaction hash: ${tx.hash}`);
+
+	const deliveryHash = await getDeliveryHash(
+		rx,
+		fromChainId,
+		providerPolygon
+	);
 
 	console.log("Waiting for delivery...");
 	while (true) {
@@ -85,6 +105,7 @@ const sendDataPacket = async () => {
 		const completed = await toChainSimpleWormholeContract
 			.connect(walletCelo)
 			.seenDeliveryVaaHashes(deliveryHash);
+		console.log(`isCompleted : ${completed}`);
 		if (completed) {
 			break;
 		}
@@ -93,11 +114,12 @@ const sendDataPacket = async () => {
 	console.log(`Reading Datapacket`);
 	const readIdentity = await toChainSimpleWormholeContract
 		.connect(walletCelo)
-		.latestIdentityRecieved();
-	console.log(`Latest identity: ${identity}`);
+		.viewLatestIdentity();
+	console.log(`Latest identity: ${readIdentity}`);
 };
 
 async function getDeliveryHash(rx, chainId, provider) {
+	console.log({ rx, chainId, provider });
 	const sourceChain = "Polygon";
 	const wormholeAddress = chainIdToWormholeCoreAddress[chainId];
 	if (!wormholeAddress) {
@@ -107,6 +129,7 @@ async function getDeliveryHash(rx, chainId, provider) {
 	if (!wormholeRelayerAddress) {
 		throw Error(`No wormhole relayer contract on ${sourceChain}`);
 	}
+	console.log("Found required addresses");
 	const log = rx.logs.find(
 		(log) =>
 			log.address.toLowerCase() === wormholeAddress.toLowerCase() &&
@@ -117,25 +140,33 @@ async function getDeliveryHash(rx, chainId, provider) {
 						"ethereum"
 					).toLowerCase()
 	);
+
 	if (!log) throw Error("No wormhole relayer log found");
+	console.log(`Log is ${log}`);
 	const wormholePublishedMessage =
 		ethers_contracts.Implementation__factory.createInterface().parseLog(
 			log
 		);
+	console.log(`wormholePublishedMessage is ${wormholePublishedMessage}`);
 	const block = await provider.getBlock(rx.blockHash);
+	console.log(`block is ${block}`);
 	const body = ethers.utils.solidityPack(
 		["uint32", "uint32", "uint16", "bytes32", "uint64", "uint8", "bytes"],
 		[
 			block.timestamp,
 			wormholePublishedMessage.args["nonce"],
-			CHAINS[sourceChain],
+			5,
 			log.topics[1],
 			wormholePublishedMessage.args["sequence"],
 			wormholePublishedMessage.args["consistencyLevel"],
 			wormholePublishedMessage.args["payload"],
 		]
 	);
+
+	console.log(`body is ${body}`);
+
 	const deliveryHash = ethers.utils.keccak256(ethers.utils.keccak256(body));
+	console.log(`Delivery hash is ${deliveryHash}`);
 	return deliveryHash;
 }
 
