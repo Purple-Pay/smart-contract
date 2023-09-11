@@ -35,6 +35,11 @@ module.exports = {
 			chainId: 336,
 			accounts: [private_key],
 		},
+		mantleTestnet: {
+			url: "https://rpc.testnet.mantle.xyz",
+			chainId: 5001,
+			accounts: [private_key],
+		},
 	},
 	etherscan: {
 		apiKey: {
