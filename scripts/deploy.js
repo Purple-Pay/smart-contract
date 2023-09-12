@@ -11,6 +11,10 @@ async function main() {
 
 	console.log("PurplePay deployed to:", contract.address);
 
+	// console.log("Unpausing contract");
+
+	// await contract.pauseContract();
+
 	// const contract = await upgrades.deployProxy(burnerContract);
 	// await contract.deployed();
 	// console.log("V1 Contract deployed to:", contract.address);

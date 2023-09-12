@@ -13,6 +13,8 @@
 		"deploy:shibuya": "hardhat run --network shibuya scripts/deploy.js",
 		"deploy:astar": "hardhat run --network astar scripts/deploy.js",
 		"deploy:mantleTestnet": "hardhat run --network mantleTestnet scripts/deploy.js",
+		"deploy:mantle":"hardhat run --network mantle scripts/deploy.js",
+		"deploy:lineaTestnet": "hardhat run --network lineaTestnet scripts/deploy.js",
 		"run:local": "hardhat run --network localhost scripts/test.js",
 		"compile": "hardhat compile --show-stack-traces"
 	},
