@@ -30,10 +30,26 @@ module.exports = {
 			chainId: 592,
 			accounts: [private_key],
 		},
+		shiden: {
+			url: "https://evm.shiden.astar.network",
+			chainId: 336,
+			accounts: [private_key],
+		},
 		mantleTestnet: {
 			url: "https://rpc.testnet.mantle.xyz",
 			chainId: 5001,
 			accounts: [private_key],
+		},
+		mantle: {
+			url: "https://rpc.mantle.xyz",
+			chainId: 5000,
+			accounts: [private_key],
+		},
+		lineaTestnet: {
+			url: "https://rpc.goerli.linea.build",
+			chainId: 59140,
+			accounts: [private_key],
+			gasPrice: 1000000000,
 		},
 	},
 	etherscan: {
@@ -43,4 +59,14 @@ module.exports = {
 			polygon: "6U5Q2T3HVNYVAVKFMXID47H5F9JRJ3KDNB",
 		},
 	},
+	customChains: [
+		{
+			network: "astar",
+			chainId: 592,
+			urls: {
+				apiURL: "https://astar.public.blastapi.io",
+				browserURL: "https://astar.subscan.io",
+			},
+		},
+	],
 };

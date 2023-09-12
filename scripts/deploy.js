@@ -6,13 +6,15 @@ async function main() {
 	console.log("Deploying PurplePay...");
 	// deploy
 
-	const contract = await burnerContract.deploy();
+	const contract = await burnerContract.deploy({});
 
 	console.log("PurplePay being deployed...");
 
 	await contract.deployed();
 
 	console.log("PurplePay deployed to:", contract.address);
+
+	await contract.pauseContract();
 
 	// const contract = await upgrades.deployProxy(burnerContract);
 	// await contract.deployed();
@@ -36,3 +38,4 @@ main().catch((error) => {
 // shibuya: 0x9afd73664942DaA64aa67075F831539d453E7777
 // astar: 0x9afd73664942DaA64aa67075F831539d453E7777
 // mantleTestnet: 0x68dEBf2073bEc47E27F63CA863A1C17beaB24456
+// lineaTestnet: 0x5EcA7CA3Ba5031F1Ad08b97215c54E0EFA5de7aE
