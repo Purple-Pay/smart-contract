@@ -6,7 +6,7 @@ const private_key = process.env.PRIVATE_KEY;
 
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
-	solidity: "0.8.18",
+	solidity: "0.8.19",
 	networks: {
 		goerli: {
 			url: `https://eth-goerli.api.onfinality.io/public`,
@@ -17,7 +17,7 @@ module.exports = {
 			accounts: [private_key],
 		},
 		mumbai: {
-			url: "https://rpc.ankr.com/polygon_mumbai",
+			url: "https://polygon-mumbai.blockpi.network/v1/rpc/public",
 			accounts: [private_key],
 		},
 		shibuya: {
