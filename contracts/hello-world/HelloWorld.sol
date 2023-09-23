@@ -9,6 +9,7 @@ import "./HelloWorldMessages.sol";
 
 contract HelloWorld is HelloWorldGetters, HelloWorldMessages {
     using BytesLib for bytes;
+    string public id_string;
 
     constructor(address wormhole_, uint16 chainId_, uint8 wormholeFinality_) {
         // sanity check input values
@@ -32,6 +33,7 @@ contract HelloWorld is HelloWorldGetters, HelloWorldMessages {
         );
         IWormhole wormhole = wormhole();
         uint256 wormholeFee = wormhole.messageFee();
+        id_string = helloWorldMessage;
 
         require(msg.value == wormholeFee, "insufficient value");
 
