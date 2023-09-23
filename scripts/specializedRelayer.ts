@@ -27,7 +27,7 @@ import { bs58 } from "@coral-xyz/anchor/dist/cjs/utils/bytes";
 
 const main = async()=>{
 	// On Polygon Mumbai
-	const emmitterAddress = "0x1389cF6FF8589A35965b90575D2bDcC08A29BDdc"
+	const emmitterAddress = "0x8b03FF3BE5cEE91b2C64e5B6C62dd69Db78BAFe7"
 	const providerPolygon = new ethers.providers.JsonRpcProvider(
 		"https://polygon-testnet.public.blastapi.io"
 	);
@@ -40,6 +40,7 @@ const main = async()=>{
 		abi,
 		providerPolygon
 	);
+	// console.log({helloWorldContractPolygon})
 	const contract = helloWorldContractPolygon.connect(walletPolygon)
 	console.log("Got Contract Sending Message");
 	const sendMessageTransaction = await contract.sendMessage('Purple Pay World')
@@ -102,34 +103,34 @@ const main = async()=>{
 
 	// console.log("Confriming: ",await conn.confirmTransaction(txids));
 	// add emitter address once per address
-	// const methods = program.methods
-	// console.log({methods})
-	// console.log("Adding emmiter address.....");
-	// const baseEmitter = "0000000000000000000000001389cF6FF8589A35965b90575D2bDcC08A29BDdc"
-	// const bufferEmitterAddress = Buffer.from(baseEmitter, 'hex');
-	// console.log(bufferEmitterAddress)
+	const methods = program.methods
+	console.log({methods})
+	console.log("Adding emmiter address.....");
+	const baseEmitter = "0000000000000000000000008b03FF3BE5cEE91b2C64e5B6C62dd69Db78BAFe7"
+	const bufferEmitterAddress = Buffer.from(baseEmitter, 'hex');
+	console.log(bufferEmitterAddress)
 
-	// const tx = await createRegisterForeignEmitterInstruction(
-	// 	conn,
-    //     programId,
-    //     kp.publicKey,
-	// 	5,
-	// 	bufferEmitterAddress
-	// )
-	// console.log({tx})
-	// const temp = new Transaction().add(tx);
-	// console.log("Transaction made....emitter address")
-	// //? what is commitment
-	// const { blockhash: blockHash } = await conn.getLatestBlockhash();
-	// temp.recentBlockhash = blockHash;
-	// temp.feePayer = kp.publicKey;
-	// console.log("Signing....emitter address")
+	const tx = await createRegisterForeignEmitterInstruction(
+		conn,
+        programId,
+        kp.publicKey,
+		5,
+		bufferEmitterAddress
+	)
+	console.log({tx})
+	const temp = new Transaction().add(tx);
+	console.log("Transaction made....emitter address")
+	//? what is commitment
+	const { blockhash: blockHash } = await conn.getLatestBlockhash();
+	temp.recentBlockhash = blockHash;
+	temp.feePayer = kp.publicKey;
+	console.log("Signing....emitter address")
 
-	// const sign = await temp.sign(kp);
-	// console.log("Sending Transaction....emitter address")
-	// const txids = await conn.sendTransaction(temp, [kp]);
+	const sign = await temp.sign(kp);
+	console.log("Sending Transaction....emitter address")
+	const txids = await conn.sendTransaction(temp, [kp]);
 
-	// console.log("Confriming: ",await conn.confirmTransaction(txids));
+	console.log("Confriming: ",await conn.confirmTransaction(txids));
 
 	console.log("Calling recieve method......")
 	const foreignEmitter = deriveForeignEmitterKey(programId,5);
