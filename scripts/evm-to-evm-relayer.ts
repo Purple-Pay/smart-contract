@@ -1,13 +1,8 @@
 import {
-	parseVaa,
 	parseSequenceFromLogEth,
 } from "@certusone/wormhole-sdk";
-import * as wh from "@certusone/wormhole-sdk";
 import { ethers } from "ethers";
 import abi from "../abi/helloworld.json";
-
-
-
 
 
 const main = async()=>{
@@ -29,7 +24,7 @@ const main = async()=>{
 	const contract = helloWorldContractPolygon.connect(walletPolygon)
 	console.log("Got Contract Sending Message");
 	
-    const name = "hello1.eth";
+    const name = "hello8.eth";
 	const chain = "polygon";
 
 	const isSenderRegistered = await contract.isSenderRegistered(
@@ -41,7 +36,7 @@ const main = async()=>{
 			console.log("User already registered find a new namespace");
             const currentID = await contract.fetchIDFromAddress();
 	        console.log("Current ID: " + currentID);
-			return;
+            return;
 	}
 
 	const registerId = await contract.storeID(name, chain, ""); //initially no data
@@ -102,7 +97,7 @@ const main = async()=>{
     console.log("Waiting for delivery...");
 
     const receipt = await destContract
-    .receiveMessage(vaaBytes)
+    .receiveMessage(vaaBytes, {gasLimit: 5000000 })
     .then((tx: ethers.ContractTransaction) => tx.wait())
     .catch((msg: any) => {
         console.error(msg);
@@ -110,6 +105,10 @@ const main = async()=>{
     });
 
     console.log("Received message!", receipt);
+
+    console.log("getting id on celo chain");
+	const celoId = await destContract.getID(nameHash);
+	console.log("celo id is :", celoId);
 
 }
 
