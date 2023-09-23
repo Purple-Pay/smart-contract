@@ -35,6 +35,11 @@ module.exports = {
 			chainId: 5001,
 			accounts: [private_key],
 		},
+		celoTestnet: {
+			url: "https://alfajores-forno.celo-testnet.org",
+			chainId: 44787,
+			accounts: [private_key],
+		},
 	},
 	etherscan: {
 		apiKey: {

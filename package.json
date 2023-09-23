@@ -14,8 +14,10 @@
 		"deploy:shibuya": "hardhat run --network shibuya scripts/deploy.js",
 		"deploy:astar": "hardhat run --network astar scripts/deploy.js",
 		"deployWormhole:mumbai": "hardhat run --network mumbai scripts/deploy-hello-wormhole.js",
+		"deployWormhole:celoTestnet": "hardhat run --network celoTestnet scripts/deploy-hello-wormhole.js",
 		"activateSolana": "hardhat run --network mumbai scripts/activateSolana.ts",
 		"testWormhole": "hardhat run --network mumbai scripts/specializedRelayer.ts",
+		"testEvm":"hardhat run --network mumbai scripts/evm-to-evm-relayer.ts",
 		"run:local": "hardhat run --network localhost scripts/test.js",
 		"compile": "hardhat compile --show-stack-traces"
 	},

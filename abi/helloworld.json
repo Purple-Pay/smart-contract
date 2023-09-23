@@ -21,6 +21,34 @@
     "type": "constructor"
   },
   {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "_name",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_registered_chain",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_new_chain",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_new_chain_address",
+        "type": "string"
+      }
+    ],
+    "name": "addChain",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "chainId",
     "outputs": [
@@ -31,6 +59,49 @@
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes",
+        "name": "_data",
+        "type": "bytes"
+      }
+    ],
+    "name": "decode",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes",
+        "name": "_hash",
+        "type": "bytes"
+      }
+    ],
+    "name": "decodeChain",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "chain",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "user_address",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "pure",
     "type": "function"
   },
   {
@@ -67,6 +138,30 @@
   {
     "inputs": [
       {
+        "internalType": "bytes",
+        "name": "_hash",
+        "type": "bytes"
+      }
+    ],
+    "name": "decodeRegisteringChain",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "chain",
+        "type": "string"
+      },
+      {
+        "internalType": "address",
+        "name": "user_address",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "components": [
           {
             "internalType": "uint8",
@@ -89,6 +184,106 @@
       {
         "internalType": "bytes",
         "name": "encodedMessage",
+        "type": "bytes"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "fetchIDFromAddress",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "bytes",
+            "name": "namehash",
+            "type": "bytes"
+          },
+          {
+            "internalType": "address",
+            "name": "sender_address",
+            "type": "address"
+          },
+          {
+            "internalType": "bytes",
+            "name": "serialisedData",
+            "type": "bytes"
+          },
+          {
+            "internalType": "bytes[]",
+            "name": "multi_chain_address",
+            "type": "bytes[]"
+          }
+        ],
+        "internalType": "struct HelloWorld.IDStruct",
+        "name": "userID",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes",
+        "name": "nameHash",
+        "type": "bytes"
+      }
+    ],
+    "name": "getID",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "bytes",
+            "name": "namehash",
+            "type": "bytes"
+          },
+          {
+            "internalType": "address",
+            "name": "sender_address",
+            "type": "address"
+          },
+          {
+            "internalType": "bytes",
+            "name": "serialisedData",
+            "type": "bytes"
+          },
+          {
+            "internalType": "bytes[]",
+            "name": "multi_chain_address",
+            "type": "bytes[]"
+          }
+        ],
+        "internalType": "struct HelloWorld.IDStruct",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "_name",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_chain",
+        "type": "string"
+      }
+    ],
+    "name": "getNameHash",
+    "outputs": [
+      {
+        "internalType": "bytes",
+        "name": "",
         "type": "bytes"
       }
     ],
@@ -134,13 +329,19 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "id_string",
+    "inputs": [
+      {
+        "internalType": "bytes",
+        "name": "nameHash",
+        "type": "bytes"
+      }
+    ],
+    "name": "getSerialisedID",
     "outputs": [
       {
-        "internalType": "string",
+        "internalType": "bytes",
         "name": "",
-        "type": "string"
+        "type": "bytes"
       }
     ],
     "stateMutability": "view",
@@ -155,6 +356,30 @@
       }
     ],
     "name": "isMessageConsumed",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "_name",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_chain",
+        "type": "string"
+      }
+    ],
+    "name": "isSenderRegistered",
     "outputs": [
       {
         "internalType": "bool",
@@ -210,13 +435,7 @@
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "helloWorldMessage",
-        "type": "string"
-      }
-    ],
+    "inputs": [],
     "name": "sendMessage",
     "outputs": [
       {
@@ -226,6 +445,57 @@
       }
     ],
     "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "_name",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_parent_chain",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_data",
+        "type": "string"
+      }
+    ],
+    "name": "storeID",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "bytes",
+            "name": "namehash",
+            "type": "bytes"
+          },
+          {
+            "internalType": "address",
+            "name": "sender_address",
+            "type": "address"
+          },
+          {
+            "internalType": "bytes",
+            "name": "serialisedData",
+            "type": "bytes"
+          },
+          {
+            "internalType": "bytes[]",
+            "name": "multi_chain_address",
+            "type": "bytes[]"
+          }
+        ],
+        "internalType": "struct HelloWorld.IDStruct",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
