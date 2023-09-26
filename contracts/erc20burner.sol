@@ -9,7 +9,8 @@ contract ERC20Burner {
 		address _tokenAddress,
 		uint256 _amount,
 		address _merchantAddress,
-		address _purplePayMultiSig
+		address _ownerAddress,
+		uint _commissionFee
 	) {
 		IERC20 token = IERC20(_tokenAddress);
 
@@ -17,10 +18,10 @@ contract ERC20Burner {
 			revert InsufficientBalance(token.balanceOf(address(this)), _amount);
 		}
 
-		uint256 purplePayFee = _amount / 100;
-		uint256 merchantShare = _amount - purplePayFee;
+		uint256 commisionFee = (_amount * _commissionFee) / 10000;
+		uint256 merchantShare = _amount - commisionFee;
 
-		token.transfer(_purplePayMultiSig, purplePayFee);
+		token.transfer(_ownerAddress, commisionFee);
 		token.transfer(_merchantAddress, merchantShare);
 	}
 }

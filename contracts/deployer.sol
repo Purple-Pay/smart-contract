@@ -7,6 +7,16 @@ import "./erc20burner.sol";
 import "./nativeburner.sol";
 
 contract PurplePay is Ownable {
+	address ownerAddress = address(0);
+	uint commissionFee = 0;
+
+	constructor(address _ownerAddress, uint _commissionFee) {
+		ownerAddress = _ownerAddress;
+		commissionFee = _commissionFee;
+
+		transferOwnership(_ownerAddress);
+	}
+
 	bool public isPaused = true;
 
 	function pauseContract() public onlyOwner {
@@ -17,22 +27,27 @@ contract PurplePay is Ownable {
 		string memory _salt,
 		address _tokenAddress,
 		uint _amount,
-		address _merchantAddress,
-		address _purplePayMultiSig
+		address _merchantAddress
 	) public onlyOwner returns (address) {
 		if (isPaused) revert PausedContract();
 
 		if (_tokenAddress == address(0)) {
 			NativeBurner nativeBurner = new NativeBurner{
 				salt: bytes32(keccak256(abi.encodePacked(_salt)))
-			}(_amount, _merchantAddress, _purplePayMultiSig);
+			}(_amount, _merchantAddress, ownerAddress, commissionFee);
 
 			return address(nativeBurner);
 		}
 
 		ERC20Burner erc20Burner = new ERC20Burner{
 			salt: bytes32(keccak256(abi.encodePacked(_salt)))
-		}(_tokenAddress, _amount, _merchantAddress, _purplePayMultiSig);
+		}(
+			_tokenAddress,
+			_amount,
+			_merchantAddress,
+			ownerAddress,
+			commissionFee
+		);
 
 		return address(erc20Burner);
 	}
@@ -41,8 +56,7 @@ contract PurplePay is Ownable {
 		string memory _salt,
 		address _tokenAddress,
 		uint _amount,
-		address _merchantAddress,
-		address _purplePayMultiSig
+		address _merchantAddress
 	) public view returns (address) {
 		if (isPaused) revert PausedContract();
 
@@ -50,7 +64,8 @@ contract PurplePay is Ownable {
 			type(NativeBurner).creationCode,
 			abi.encode(_amount),
 			abi.encode(_merchantAddress),
-			abi.encode(_purplePayMultiSig)
+			abi.encode(ownerAddress),
+			abi.encode(commissionFee)
 		);
 
 		bytes memory erc20ContractBytecode = abi.encodePacked(
@@ -58,7 +73,8 @@ contract PurplePay is Ownable {
 			abi.encode(_tokenAddress),
 			abi.encode(_amount),
 			abi.encode(_merchantAddress),
-			abi.encode(_purplePayMultiSig)
+			abi.encode(ownerAddress),
+			abi.encode(commissionFee)
 		);
 
 		bytes memory contractBytecode = _tokenAddress == address(0)
