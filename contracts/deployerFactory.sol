@@ -17,10 +17,13 @@ contract PurpleProtocolDeployerFactory {
 	function deployPurpleProtocol(
 		address _ownerAddress,
 		uint _commissionFee
-	) public returns (address deployedFactory) {
-		deployedFactory = address(
+	) public returns (address) {
+		address deployedPurpleProtocol = address(
 			new PurpleProtocol(_ownerAddress, _commissionFee)
 		);
-		emit PurpleProtocolDeployed(_ownerAddress, deployedFactory);
+
+		emit PurpleProtocolDeployed(_ownerAddress, deployedPurpleProtocol);
+
+		return deployedPurpleProtocol;
 	}
 }
