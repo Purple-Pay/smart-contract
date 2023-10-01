@@ -7,17 +7,26 @@ import "./erc20burner.sol";
 import "./nativeburner.sol";
 
 contract PurplePay is Ownable {
-	address ownerAddress = address(0);
 	uint commissionFee = 0;
 
 	constructor(address _ownerAddress, uint _commissionFee) {
-		ownerAddress = _ownerAddress;
 		commissionFee = _commissionFee;
 
 		transferOwnership(_ownerAddress);
 	}
 
+	event PaymentRecieved(
+		address indexed _from,
+		address indexed _to,
+		address indexed _tokenAddress,
+		uint _amount
+	);
+
 	bool public isPaused = true;
+
+	function updateCommissionFee(uint _commissionFee) public onlyOwner {
+		commissionFee = _commissionFee;
+	}
 
 	function pauseContract() public onlyOwner {
 		isPaused = !isPaused;
@@ -34,19 +43,27 @@ contract PurplePay is Ownable {
 		if (_tokenAddress == address(0)) {
 			NativeBurner nativeBurner = new NativeBurner{
 				salt: bytes32(keccak256(abi.encodePacked(_salt)))
-			}(_amount, _merchantAddress, ownerAddress, commissionFee);
+			}(_amount, _merchantAddress, owner(), commissionFee);
+
+			emit PaymentRecieved(
+				msg.sender,
+				address(nativeBurner),
+				_tokenAddress,
+				_amount
+			);
 
 			return address(nativeBurner);
 		}
 
 		ERC20Burner erc20Burner = new ERC20Burner{
 			salt: bytes32(keccak256(abi.encodePacked(_salt)))
-		}(
+		}(_tokenAddress, _amount, _merchantAddress, owner(), commissionFee);
+
+		emit PaymentRecieved(
+			msg.sender,
+			address(erc20Burner),
 			_tokenAddress,
-			_amount,
-			_merchantAddress,
-			ownerAddress,
-			commissionFee
+			_amount
 		);
 
 		return address(erc20Burner);
@@ -64,7 +81,7 @@ contract PurplePay is Ownable {
 			type(NativeBurner).creationCode,
 			abi.encode(_amount),
 			abi.encode(_merchantAddress),
-			abi.encode(ownerAddress),
+			abi.encode(owner()),
 			abi.encode(commissionFee)
 		);
 
@@ -73,7 +90,7 @@ contract PurplePay is Ownable {
 			abi.encode(_tokenAddress),
 			abi.encode(_amount),
 			abi.encode(_merchantAddress),
-			abi.encode(ownerAddress),
+			abi.encode(owner()),
 			abi.encode(commissionFee)
 		);
 
