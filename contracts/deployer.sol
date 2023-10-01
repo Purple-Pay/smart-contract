@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "./erc20burner.sol";
 import "./nativeburner.sol";
 
-contract PurplePay is Ownable {
+contract PurpleProtocol is Ownable {
 	uint commissionFee = 0;
 
 	constructor(address _ownerAddress, uint _commissionFee) {

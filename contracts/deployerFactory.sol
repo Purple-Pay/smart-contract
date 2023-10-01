@@ -2,14 +2,19 @@ pragma solidity ^0.8.18;
 
 import "./deployer.sol";
 
-contract PurplePayDeployerFactory {
-	event PurplePayDeployed(address indexed owner, address indexed purplePay);
+contract PurpleProtocolDeployerFactory {
+	event PurpleProtocolDeployed(
+		address indexed owner,
+		address indexed purplePay
+	);
 
-	function deployPurplePay(
+	function deployPurpleProtocol(
 		address _ownerAddress,
 		uint _commissionFee
 	) public returns (address deployedFactory) {
-		deployedFactory = address(new PurplePay(_ownerAddress, _commissionFee));
-		emit PurplePayDeployed(_ownerAddress, deployedFactory);
+		deployedFactory = address(
+			new PurpleProtocol(_ownerAddress, _commissionFee)
+		);
+		emit PurpleProtocolDeployed(_ownerAddress, deployedFactory);
 	}
 }

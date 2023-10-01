@@ -51,7 +51,9 @@ const main = async () => {
 		const [owner] = await ethers.getSigners();
 
 		const address = "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9";
-		const deployerContract = await ethers.getContractFactory("PurplePay");
+		const deployerContract = await ethers.getContractFactory(
+			"PurpleProtocol"
+		);
 		const contract = deployerContract.attach(address);
 
 		const isPaused = await contract.isPaused();
@@ -68,7 +70,7 @@ const main = async () => {
 		await getBalance(merchantAddress, "Merchant address");
 
 		// balance of purplepay address
-		await getBalance(purplePayAddress, "PurplePay address");
+		await getBalance(purplePayAddress, "PurpleProtocol address");
 
 		// predict address
 		const predictedAddress = await predictAddress(contract);
@@ -92,7 +94,7 @@ const main = async () => {
 		await getBalance(merchantAddress, "Merchant address");
 
 		// balance of purplepay address
-		await getBalance(purplePayAddress, "PurplePay address");
+		await getBalance(purplePayAddress, "PurpleProtocol address");
 	} catch (error) {
 		console.error(error);
 	}
