@@ -46,15 +46,17 @@ const deployBurner = async (contract) => {
 
 const main = async () => {
 	try {
+		// Your deployed PurpleProtocol address
+		const deployerAddress = "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9";
+
 		salt = uuidv4().replace(/-/g, "");
 
 		const [owner] = await ethers.getSigners();
 
-		const address = "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9";
 		const deployerContract = await ethers.getContractFactory(
 			"PurpleProtocol"
 		);
-		const contract = deployerContract.attach(address);
+		const contract = deployerContract.attach(deployerAddress);
 
 		const isPaused = await contract.isPaused();
 

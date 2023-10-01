@@ -8,6 +8,12 @@ contract PurpleProtocolDeployerFactory {
 		address indexed purplePay
 	);
 
+	/**
+	 * @dev Deploys a new Purple Protocol contract.
+	 * @param _ownerAddress The address of the owner of the Purple Protocol contract.
+	 * @param _commissionFee The commission fee of the Purple Protocol contract, _commissionFee * 100
+	 * @return deployedFactory The address of the deployed Purple Protocol contract.
+	 */
 	function deployPurpleProtocol(
 		address _ownerAddress,
 		uint _commissionFee

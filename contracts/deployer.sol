@@ -24,14 +24,31 @@ contract PurpleProtocol is Ownable {
 
 	bool public isPaused = true;
 
+	/**
+	 * @dev Updates the commission fee of the Purple Protocol contract.
+	 * @param _commissionFee The new commission fee of the Purple Protocol contract, _commissionFee * 100
+	 */
 	function updateCommissionFee(uint _commissionFee) public onlyOwner {
 		commissionFee = _commissionFee;
 	}
 
+	/**
+	 * @dev Pauses the Purple Protocol contract.
+	 */
 	function pauseContract() public onlyOwner {
 		isPaused = !isPaused;
 	}
 
+	/**
+	 * @dev Deploys a new burner contract.
+	 * @param _salt The salt of the burner contract, unique key for generating burner contracts.
+	 * @param _tokenAddress The address of the ERC20 token to accept funds in, send address(0) for Native transfers.
+	 * @param _amount The amount of tokens to be burned, _amount * 10**decimals
+	 * @param _merchantAddress The address of the merchant in which they will recieve the funds.
+	 * @return address The address of the deployed burner contract.
+	 *
+	 * @notice The args for generating burner contracts, should be same as used to predict the address of the burner contract.
+	 */
 	function deploy(
 		string memory _salt,
 		address _tokenAddress,
@@ -69,6 +86,14 @@ contract PurpleProtocol is Ownable {
 		return address(erc20Burner);
 	}
 
+	/**
+	 * @dev Predicts the address of the burner contract.
+	 * @param _salt The salt of the burner contract, unique key for generating burner contracts.
+	 * @param _tokenAddress The address of the ERC20 token to accept funds in, send address(0) for Native transfers.
+	 * @param _amount The amount of tokens to be burned, _amount * 10**decimals
+	 * @param _merchantAddress The address of the merchant in which they will recieve the funds.
+	 * @return address The address of the deployed burner contract.
+	 */
 	function predictAddress(
 		string memory _salt,
 		address _tokenAddress,
