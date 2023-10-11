@@ -197,9 +197,9 @@
       {
         "components": [
           {
-            "internalType": "bytes",
-            "name": "namehash",
-            "type": "bytes"
+            "internalType": "bool",
+            "name": "isVerified",
+            "type": "bool"
           },
           {
             "internalType": "address",
@@ -208,18 +208,31 @@
           },
           {
             "internalType": "bytes",
-            "name": "serialisedData",
+            "name": "namehash",
             "type": "bytes"
           },
           {
-            "internalType": "bytes[]",
-            "name": "multi_chain_address",
-            "type": "bytes[]"
+            "internalType": "bytes",
+            "name": "solana_address",
+            "type": "bytes"
           }
         ],
         "internalType": "struct HelloWorld.IDStruct",
         "name": "userID",
         "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getEncodedID",
+    "outputs": [
+      {
+        "internalType": "bytes",
+        "name": "",
+        "type": "bytes"
       }
     ],
     "stateMutability": "view",
@@ -238,9 +251,9 @@
       {
         "components": [
           {
-            "internalType": "bytes",
-            "name": "namehash",
-            "type": "bytes"
+            "internalType": "bool",
+            "name": "isVerified",
+            "type": "bool"
           },
           {
             "internalType": "address",
@@ -249,13 +262,13 @@
           },
           {
             "internalType": "bytes",
-            "name": "serialisedData",
+            "name": "namehash",
             "type": "bytes"
           },
           {
-            "internalType": "bytes[]",
-            "name": "multi_chain_address",
-            "type": "bytes[]"
+            "internalType": "bytes",
+            "name": "solana_address",
+            "type": "bytes"
           }
         ],
         "internalType": "struct HelloWorld.IDStruct",
@@ -339,9 +352,9 @@
     "name": "getSerialisedID",
     "outputs": [
       {
-        "internalType": "bytes",
+        "internalType": "bool",
         "name": "",
-        "type": "bytes"
+        "type": "bool"
       }
     ],
     "stateMutability": "view",
@@ -470,9 +483,9 @@
       {
         "components": [
           {
-            "internalType": "bytes",
-            "name": "namehash",
-            "type": "bytes"
+            "internalType": "bool",
+            "name": "isVerified",
+            "type": "bool"
           },
           {
             "internalType": "address",
@@ -481,13 +494,13 @@
           },
           {
             "internalType": "bytes",
-            "name": "serialisedData",
+            "name": "namehash",
             "type": "bytes"
           },
           {
-            "internalType": "bytes[]",
-            "name": "multi_chain_address",
-            "type": "bytes[]"
+            "internalType": "bytes",
+            "name": "solana_address",
+            "type": "bytes"
           }
         ],
         "internalType": "struct HelloWorld.IDStruct",

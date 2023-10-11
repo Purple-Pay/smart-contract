@@ -9,7 +9,7 @@ import "./HelloWorldMessages.sol";
 
 contract HelloWorld is HelloWorldGetters, HelloWorldMessages {
     using BytesLib for bytes;
-    
+
     constructor(address wormhole_, uint16 chainId_, uint8 wormholeFinality_) {
         // sanity check input values
         require(wormhole_ != address(0), "invalid Wormhole address");
@@ -24,10 +24,10 @@ contract HelloWorld is HelloWorldGetters, HelloWorldMessages {
     }
 
     struct IDStruct {
-		bytes namehash;
+		bool isVerified;
 		address sender_address;
-		bytes serialisedData;
-		bytes[] multi_chain_address;
+		bytes namehash;
+		bytes solana_address;
 	}
 
 	mapping(bytes => IDStruct) db; //mapping of nameHash => ID
@@ -54,8 +54,8 @@ contract HelloWorld is HelloWorldGetters, HelloWorldMessages {
 		return db[nameHash];
 	}
 
-	function getSerialisedID(bytes memory nameHash) external view returns (bytes memory) {
-		return db[nameHash].serialisedData;
+	function getSerialisedID(bytes memory nameHash) external view returns (bool) {
+		return db[nameHash].isVerified;
 	}
 
 	function decode(bytes memory _data) external pure returns (string memory) {
@@ -65,6 +65,12 @@ contract HelloWorld is HelloWorldGetters, HelloWorldMessages {
 	function fetchIDFromAddress() public view returns (IDStruct memory userID) {
 		bytes memory nameHash = reverseDBMapping[msg.sender];
 		return db[nameHash];
+	}
+
+	function getEncodedID() public view returns (bytes memory) {
+		bytes memory nameHash = reverseDBMapping[msg.sender];
+		IDStruct memory userID = db[nameHash];
+		return abi.encode(userID);
 	}
 
 	function storeID(string memory _name,string memory _parent_chain,string memory _data) external returns (IDStruct memory) {
@@ -80,17 +86,12 @@ contract HelloWorld is HelloWorldGetters, HelloWorldMessages {
 
 		// hashedChain is using address instead of string
 		// address => string before hashing
-		bytes memory hashedChain = abi.encode(_parent_chain, msg.sender);
-
-		bytes[] memory multi_chain_address = new bytes[](1);
-
-		multi_chain_address[0] = hashedChain;
 
 		IDStruct memory id = IDStruct(
-			nameHash,
+			false,
 			msg.sender,
 			serialisedData,
-			multi_chain_address
+			bytes("")
 		);
 		db[nameHash] = id;
 		reverseDBMapping[msg.sender] = nameHash;
@@ -114,7 +115,7 @@ contract HelloWorld is HelloWorldGetters, HelloWorldMessages {
 			_new_chain_address
 		);
 
-		db[nameHash].multi_chain_address.push(newHashedChain);
+		db[nameHash].solana_address = newHashedChain;
 	}
 
 	function decodeChain(
@@ -133,16 +134,18 @@ contract HelloWorld is HelloWorldGetters, HelloWorldMessages {
 
     function sendMessage() public payable returns (uint64 messageSequence) {
         bytes memory nameHash = reverseDBMapping[msg.sender];
+		IDStruct memory idStruct = db[nameHash];
         require(
             abi.encodePacked(nameHash).length < type(uint16).max,
             "message too large"
         );
+
         IWormhole wormhole = wormhole();
         uint256 wormholeFee = wormhole.messageFee();
         require(msg.value == wormholeFee, "insufficient value");
         messageSequence = wormhole.publishMessage{value: wormholeFee}(
             0, // batchID
-            nameHash,
+            abi.encode(idStruct),
             wormholeFinality()
         );
     }
@@ -158,7 +161,7 @@ contract HelloWorld is HelloWorldGetters, HelloWorldMessages {
         require(valid, reason);
         require(verifyEmitter(wormholeMessage), "unknown emitter");
 
-        (IDStruct memory identity, address sender) = abi.decode(wormholeMessage.payload, (IDStruct, address));
+        (IDStruct memory identity) = abi.decode(wormholeMessage.payload, (IDStruct));
         bytes memory nameHash = identity.namehash;
         db[nameHash] = identity;
         require(!isMessageConsumed(wormholeMessage.hash), "message already consumed");
@@ -182,7 +185,6 @@ contract HelloWorld is HelloWorldGetters, HelloWorldMessages {
     }
 
     function verifyEmitter(IWormhole.VM memory vm) internal view returns (bool) {
-
         return getRegisteredEmitter(vm.emitterChainId) == vm.emitterAddress;
     }
 

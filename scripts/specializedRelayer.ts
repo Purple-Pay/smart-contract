@@ -4,7 +4,7 @@ import {
 } from "@certusone/wormhole-sdk";
 import * as wh from "@certusone/wormhole-sdk";
 import { Connection,PublicKey, PublicKeyInitData, Transaction, TransactionInstruction } from "@solana/web3.js";
-import { createHelloWorldProgramInterface, deriveConfigKey, deriveForeignEmitterKey, deriveReceivedKey, payerToWallet } from "./utils";
+import { createHelloWorldProgramInterface, deriveConfigKey, deriveForeignEmitterKey, deriveReceivedKey, getReceivedData, payerToWallet } from "./utils";
 import { derivePostedVaaKey, getPostMessageCpiAccounts } from "@certusone/wormhole-sdk/lib/cjs/solana/wormhole";
 import { deriveAddress, signSendAndConfirmTransaction } from "@certusone/wormhole-sdk/lib/cjs/solana";
 import { ethers } from "ethers";
@@ -27,7 +27,7 @@ import { bs58 } from "@coral-xyz/anchor/dist/cjs/utils/bytes";
 
 const main = async()=>{
 	// On Polygon Mumbai
-	const emmitterAddress = "0x8b03FF3BE5cEE91b2C64e5B6C62dd69Db78BAFe7"
+	const emmitterAddress = "0x23c290898e049f5EEE7776B18EEfaCb13D8C925b"
 	const providerPolygon = new ethers.providers.JsonRpcProvider(
 		"https://polygon-testnet.public.blastapi.io"
 	);
@@ -35,6 +35,7 @@ const main = async()=>{
 		process.env.PRIVATE_KEY!,
 		providerPolygon
 	);
+	console.log("Got wallet")
 	const helloWorldContractPolygon = new ethers.Contract(
 		emmitterAddress,
 		abi,
@@ -43,7 +44,53 @@ const main = async()=>{
 	// console.log({helloWorldContractPolygon})
 	const contract = helloWorldContractPolygon.connect(walletPolygon)
 	console.log("Got Contract Sending Message");
-	const sendMessageTransaction = await contract.sendMessage('Purple Pay World')
+
+	const name = "hello7.eth";
+	const chain = "polygon";
+
+	const isSenderRegistered = await contract.isSenderRegistered(
+		name,
+		chain
+	);
+	console.log(isSenderRegistered);
+	if (isSenderRegistered) {
+			console.log("User already registered find a new namespace");
+            const currentID = await contract.fetchIDFromAddress();
+	        console.log("Current ID: " + currentID);
+            return;
+	}
+
+	const registerId = await contract.storeID(name, chain, ""); //initially no data
+	console.log("Registering : ", registerId);
+
+	const nameHash = await contract.getNameHash(name, chain);
+	console.log("Name hash is : ", nameHash);
+
+	console.log("Fetching current ID from contract");
+	const currentID = await contract.fetchIDFromAddress();
+	console.log("Current ID: " + currentID);
+
+	console.log(
+			"Adding address of different chain (solana with address 0x1234)"
+	);
+	const addChain = await contract.addChain(
+			name,
+			chain,
+			"solana",
+			"0x1234",
+			{
+				gasLimit: 50000,
+			}
+		);
+	console.log("Chain Added successfully", addChain);
+	const dataPacket = await contract.fetchIDFromAddress();
+	console.log("Identity now is : ", dataPacket);
+
+	const encodedDataPacket = await contract.getEncodedID();
+	console.log("Encoded data packet is ", encodedDataPacket)
+	console.log("Length is : ", encodedDataPacket.length);
+
+	const sendMessageTransaction = await contract.sendMessage()
 	const sendMessageTransactionReciept = await sendMessageTransaction.wait();
 
 	const seq = parseSequenceFromLogEth(sendMessageTransactionReciept,"0x0CBE91CF822c73C2315FB05100C2F714765d5c20")
@@ -106,7 +153,7 @@ const main = async()=>{
 	const methods = program.methods
 	console.log({methods})
 	console.log("Adding emmiter address.....");
-	const baseEmitter = "0000000000000000000000008b03FF3BE5cEE91b2C64e5B6C62dd69Db78BAFe7"
+	const baseEmitter = "00000000000000000000000023c290898e049f5EEE7776B18EEfaCb13D8C925b"
 	const bufferEmitterAddress = Buffer.from(baseEmitter, 'hex');
 	console.log(bufferEmitterAddress)
 
@@ -161,7 +208,17 @@ const main = async()=>{
 	const signed = await transaction.sign(kp);
 	const txid = await conn.sendTransaction(transaction, [kp]);
 
-	await conn.confirmTransaction(txid);
+	const confirmation = await conn.confirmTransaction(txid);
+
+	console.log("Confirmation :", confirmation);
+	console.log("Reading message.....");
+
+	const message = await getReceivedData(conn,programId,5,BigInt(seq));
+	console.log("Message object : ", {message}); 
+
+	console.log(message.message.toString('utf-8'));
+
+
 }
 
 main();
@@ -235,6 +292,46 @@ export const getVAAFromAPI = async (emitter: string,sequence: string,chainId):Pr
 	return vaa;
 
 }
+
+
+// export function deriveReceivedKey(
+//   programId: PublicKeyInitData,
+//   chain: ChainId,
+//   sequence: bigint
+// ) {
+//   return deriveAddress(
+//     [
+//       Buffer.from("received"),
+//       (() => {
+//         const buf = Buffer.alloc(10);
+//         buf.writeUInt16LE(chain, 0);
+//         buf.writeBigInt64LE(sequence, 2);
+//         return buf;
+//       })(),
+//     ],
+//     programId
+//   );
+// }
+
+// export interface Received {
+//   batchId: number;
+//   message: Buffer;
+// }
+
+// export async function getReceivedData(
+//   connection: Connection,
+//   programId: PublicKeyInitData,
+//   chain: ChainId,
+//   sequence: bigint
+// ): Promise<Received> {
+//   const received = await createHelloWorldProgramInterface(connection, programId)
+//     .account.received.fetch(deriveReceivedKey(programId, chain, sequence));
+
+//   return {
+//     batchId: received.batchId as any,
+//     message: received.message as Buffer
+//   };
+// }
   
 
 

@@ -24,7 +24,7 @@ const main = async()=>{
 	const contract = helloWorldContractPolygon.connect(walletPolygon)
 	console.log("Got Contract Sending Message");
 	
-    const name = "hello8.eth";
+    const name = "hello14.eth";
 	const chain = "polygon";
 
 	const isSenderRegistered = await contract.isSenderRegistered(
@@ -93,7 +93,16 @@ const main = async()=>{
         process.env.PRIVATE_KEY!,
         providerCelo
     );
+
+   
     const destContract = destinationChainContract.connect(walletCelo);
+    //register emmiter
+    console.log("Registering Emmiter....");
+    const addressBytes =  ethers.utils.hexZeroPad(emmitterAddress, 32);
+    
+    const registerResponse = await destContract.registerEmitter(5,addressBytes)
+    console.log("Registered emitter", await registerResponse.wait());
+    
     console.log("Waiting for delivery...");
 
     const receipt = await destContract

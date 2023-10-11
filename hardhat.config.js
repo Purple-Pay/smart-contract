@@ -17,7 +17,7 @@ module.exports = {
 			accounts: [private_key],
 		},
 		mumbai: {
-			url: "https://polygon-mumbai.blockpi.network/v1/rpc/public",
+			url: "https://rpc.ankr.com/polygon_mumbai",
 			accounts: [private_key],
 		},
 		shibuya: {
