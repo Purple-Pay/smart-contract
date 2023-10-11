@@ -1,451 +1,497 @@
 [
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "_wormholeRelayer",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "nonpayable",
-      "type": "constructor"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "components": [
-            {
-              "internalType": "bytes",
-              "name": "namehash",
-              "type": "bytes"
-            },
-            {
-              "internalType": "address",
-              "name": "sender_address",
-              "type": "address"
-            },
-            {
-              "internalType": "bytes",
-              "name": "serialisedData",
-              "type": "bytes"
-            },
-            {
-              "internalType": "bytes[]",
-              "name": "multi_chain_address",
-              "type": "bytes[]"
-            }
-          ],
-          "indexed": false,
-          "internalType": "struct CrossChainIdentityPOC.IDStruct",
-          "name": "greeting",
-          "type": "tuple"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint16",
-          "name": "senderChain",
-          "type": "uint16"
-        },
-        {
-          "indexed": false,
-          "internalType": "address",
-          "name": "sender",
-          "type": "address"
-        }
-      ],
-      "name": "IDSynced",
-      "type": "event"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "string",
-          "name": "_name",
-          "type": "string"
-        },
-        {
-          "internalType": "string",
-          "name": "_registered_chain",
-          "type": "string"
-        },
-        {
-          "internalType": "string",
-          "name": "_new_chain",
-          "type": "string"
-        },
-        {
-          "internalType": "string",
-          "name": "_new_chain_address",
-          "type": "string"
-        }
-      ],
-      "name": "addChain",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "bytes",
-          "name": "_data",
-          "type": "bytes"
-        }
-      ],
-      "name": "decode",
-      "outputs": [
-        {
-          "internalType": "string",
-          "name": "",
-          "type": "string"
-        }
-      ],
-      "stateMutability": "pure",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "bytes",
-          "name": "_hash",
-          "type": "bytes"
-        }
-      ],
-      "name": "decodeChain",
-      "outputs": [
-        {
-          "internalType": "string",
-          "name": "chain",
-          "type": "string"
-        },
-        {
-          "internalType": "string",
-          "name": "user_address",
-          "type": "string"
-        }
-      ],
-      "stateMutability": "pure",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "bytes",
-          "name": "_hash",
-          "type": "bytes"
-        }
-      ],
-      "name": "decodeRegisteringChain",
-      "outputs": [
-        {
-          "internalType": "string",
-          "name": "chain",
-          "type": "string"
-        },
-        {
-          "internalType": "address",
-          "name": "user_address",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "pure",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "fetchIDFromAddress",
-      "outputs": [
-        {
-          "components": [
-            {
-              "internalType": "bytes",
-              "name": "namehash",
-              "type": "bytes"
-            },
-            {
-              "internalType": "address",
-              "name": "sender_address",
-              "type": "address"
-            },
-            {
-              "internalType": "bytes",
-              "name": "serialisedData",
-              "type": "bytes"
-            },
-            {
-              "internalType": "bytes[]",
-              "name": "multi_chain_address",
-              "type": "bytes[]"
-            }
-          ],
-          "internalType": "struct CrossChainIdentityPOC.IDStruct",
-          "name": "userID",
-          "type": "tuple"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "bytes",
-          "name": "nameHash",
-          "type": "bytes"
-        }
-      ],
-      "name": "getID",
-      "outputs": [
-        {
-          "components": [
-            {
-              "internalType": "bytes",
-              "name": "namehash",
-              "type": "bytes"
-            },
-            {
-              "internalType": "address",
-              "name": "sender_address",
-              "type": "address"
-            },
-            {
-              "internalType": "bytes",
-              "name": "serialisedData",
-              "type": "bytes"
-            },
-            {
-              "internalType": "bytes[]",
-              "name": "multi_chain_address",
-              "type": "bytes[]"
-            }
-          ],
-          "internalType": "struct CrossChainIdentityPOC.IDStruct",
-          "name": "",
-          "type": "tuple"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "string",
-          "name": "_name",
-          "type": "string"
-        },
-        {
-          "internalType": "string",
-          "name": "_chain",
-          "type": "string"
-        }
-      ],
-      "name": "getNameHash",
-      "outputs": [
-        {
-          "internalType": "bytes",
-          "name": "",
-          "type": "bytes"
-        }
-      ],
-      "stateMutability": "pure",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "bytes",
-          "name": "nameHash",
-          "type": "bytes"
-        }
-      ],
-      "name": "getSerialisedID",
-      "outputs": [
-        {
-          "internalType": "bytes",
-          "name": "",
-          "type": "bytes"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "string",
-          "name": "_name",
-          "type": "string"
-        },
-        {
-          "internalType": "string",
-          "name": "_chain",
-          "type": "string"
-        }
-      ],
-      "name": "isSenderRegistered",
-      "outputs": [
-        {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint16",
-          "name": "targetChain",
-          "type": "uint16"
-        }
-      ],
-      "name": "quoteCrossChainIdentitySyncPrice",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "cost",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "bytes",
-          "name": "payload",
-          "type": "bytes"
-        },
-        {
-          "internalType": "bytes[]",
-          "name": "",
-          "type": "bytes[]"
-        },
-        {
-          "internalType": "bytes32",
-          "name": "",
-          "type": "bytes32"
-        },
-        {
-          "internalType": "uint16",
-          "name": "sourceChain",
-          "type": "uint16"
-        },
-        {
-          "internalType": "bytes32",
-          "name": "deliveryHash",
-          "type": "bytes32"
-        }
-      ],
-      "name": "receiveWormholeMessages",
-      "outputs": [],
-      "stateMutability": "payable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "bytes32",
-          "name": "",
-          "type": "bytes32"
-        }
-      ],
-      "name": "seenDeliveryVaaHashes",
-      "outputs": [
-        {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "string",
-          "name": "_name",
-          "type": "string"
-        },
-        {
-          "internalType": "string",
-          "name": "_parent_chain",
-          "type": "string"
-        },
-        {
-          "internalType": "string",
-          "name": "_data",
-          "type": "string"
-        }
-      ],
-      "name": "storeID",
-      "outputs": [
-        {
-          "components": [
-            {
-              "internalType": "bytes",
-              "name": "namehash",
-              "type": "bytes"
-            },
-            {
-              "internalType": "address",
-              "name": "sender_address",
-              "type": "address"
-            },
-            {
-              "internalType": "bytes",
-              "name": "serialisedData",
-              "type": "bytes"
-            },
-            {
-              "internalType": "bytes[]",
-              "name": "multi_chain_address",
-              "type": "bytes[]"
-            }
-          ],
-          "internalType": "struct CrossChainIdentityPOC.IDStruct",
-          "name": "",
-          "type": "tuple"
-        }
-      ],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint16",
-          "name": "targetChain",
-          "type": "uint16"
-        },
-        {
-          "internalType": "address",
-          "name": "targetAddress",
-          "type": "address"
-        }
-      ],
-      "name": "syncCrossChainIdentity",
-      "outputs": [],
-      "stateMutability": "payable",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "wormholeRelayer",
-      "outputs": [
-        {
-          "internalType": "contract IWormholeRelayer",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    }
-  ]
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_wormholeRelayer",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "bool",
+            "name": "isKYCDone",
+            "type": "bool"
+          },
+          {
+            "internalType": "bytes",
+            "name": "namehash",
+            "type": "bytes"
+          },
+          {
+            "internalType": "address",
+            "name": "sender_address",
+            "type": "address"
+          },
+          {
+            "internalType": "bytes",
+            "name": "serialisedData",
+            "type": "bytes"
+          },
+          {
+            "internalType": "bytes[]",
+            "name": "multi_chain_address",
+            "type": "bytes[]"
+          }
+        ],
+        "indexed": false,
+        "internalType": "struct CrossChainIdentityPOC.IDStruct",
+        "name": "greeting",
+        "type": "tuple"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint16",
+        "name": "senderChain",
+        "type": "uint16"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "sender",
+        "type": "address"
+      }
+    ],
+    "name": "IDSynced",
+    "type": "event"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "_name",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_registered_chain",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_new_chain",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_new_chain_address",
+        "type": "string"
+      }
+    ],
+    "name": "addChain",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes",
+        "name": "_data",
+        "type": "bytes"
+      }
+    ],
+    "name": "decode",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes",
+        "name": "_hash",
+        "type": "bytes"
+      }
+    ],
+    "name": "decodeChain",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "chain",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "user_address",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes",
+        "name": "_hash",
+        "type": "bytes"
+      }
+    ],
+    "name": "decodeRegisteringChain",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "chain",
+        "type": "string"
+      },
+      {
+        "internalType": "address",
+        "name": "user_address",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "fetchIDFromAddress",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "bool",
+            "name": "isKYCDone",
+            "type": "bool"
+          },
+          {
+            "internalType": "bytes",
+            "name": "namehash",
+            "type": "bytes"
+          },
+          {
+            "internalType": "address",
+            "name": "sender_address",
+            "type": "address"
+          },
+          {
+            "internalType": "bytes",
+            "name": "serialisedData",
+            "type": "bytes"
+          },
+          {
+            "internalType": "bytes[]",
+            "name": "multi_chain_address",
+            "type": "bytes[]"
+          }
+        ],
+        "internalType": "struct CrossChainIdentityPOC.IDStruct",
+        "name": "userID",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes",
+        "name": "nameHash",
+        "type": "bytes"
+      }
+    ],
+    "name": "getID",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "bool",
+            "name": "isKYCDone",
+            "type": "bool"
+          },
+          {
+            "internalType": "bytes",
+            "name": "namehash",
+            "type": "bytes"
+          },
+          {
+            "internalType": "address",
+            "name": "sender_address",
+            "type": "address"
+          },
+          {
+            "internalType": "bytes",
+            "name": "serialisedData",
+            "type": "bytes"
+          },
+          {
+            "internalType": "bytes[]",
+            "name": "multi_chain_address",
+            "type": "bytes[]"
+          }
+        ],
+        "internalType": "struct CrossChainIdentityPOC.IDStruct",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "_name",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_chain",
+        "type": "string"
+      }
+    ],
+    "name": "getNameHash",
+    "outputs": [
+      {
+        "internalType": "bytes",
+        "name": "",
+        "type": "bytes"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes",
+        "name": "nameHash",
+        "type": "bytes"
+      }
+    ],
+    "name": "getSerialisedID",
+    "outputs": [
+      {
+        "internalType": "bytes",
+        "name": "",
+        "type": "bytes"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "_name",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_chain",
+        "type": "string"
+      }
+    ],
+    "name": "isSenderRegistered",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "owner",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint16",
+        "name": "targetChain",
+        "type": "uint16"
+      }
+    ],
+    "name": "quoteCrossChainIdentitySyncPrice",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "cost",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes",
+        "name": "payload",
+        "type": "bytes"
+      },
+      {
+        "internalType": "bytes[]",
+        "name": "",
+        "type": "bytes[]"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "uint16",
+        "name": "sourceChain",
+        "type": "uint16"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "deliveryHash",
+        "type": "bytes32"
+      }
+    ],
+    "name": "receiveWormholeMessages",
+    "outputs": [],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "name": "seenDeliveryVaaHashes",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "_name",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_parent_chain",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_data",
+        "type": "string"
+      }
+    ],
+    "name": "storeID",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "bool",
+            "name": "isKYCDone",
+            "type": "bool"
+          },
+          {
+            "internalType": "bytes",
+            "name": "namehash",
+            "type": "bytes"
+          },
+          {
+            "internalType": "address",
+            "name": "sender_address",
+            "type": "address"
+          },
+          {
+            "internalType": "bytes",
+            "name": "serialisedData",
+            "type": "bytes"
+          },
+          {
+            "internalType": "bytes[]",
+            "name": "multi_chain_address",
+            "type": "bytes[]"
+          }
+        ],
+        "internalType": "struct CrossChainIdentityPOC.IDStruct",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint16",
+        "name": "targetChain",
+        "type": "uint16"
+      },
+      {
+        "internalType": "address",
+        "name": "targetAddress",
+        "type": "address"
+      }
+    ],
+    "name": "syncCrossChainIdentity",
+    "outputs": [],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes",
+        "name": "nameHash",
+        "type": "bytes"
+      }
+    ],
+    "name": "toggleKYC",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "wormholeRelayer",
+    "outputs": [
+      {
+        "internalType": "contract IWormholeRelayer",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  }
+]

@@ -70,7 +70,7 @@ async function getDeliveryHash(rx, chainId, provider) {
 const main = async () => {
 	try {
 		const fromChainContractAddress =
-			"0x252e57Da21728ac46Db1D16741a812E12e2ff0d9"; //mumbai
+			"0x4E30009F3EDD4B6809b6836BBa6d9A95df853f9E"; //mumbai
 		const providerPolygon = new ethers.providers.JsonRpcProvider(
 			"https://polygon-testnet.public.blastapi.io"
 		);
@@ -85,7 +85,7 @@ const main = async () => {
 		);
 		const contract = mainChainContract.connect(walletPolygon);
 
-		const name = "HelloWorld.eth";
+		const name = "HelloWorld1.eth";
 		const chain = "polygon";
 
 		const isSenderRegistered = await contract.isSenderRegistered(
@@ -124,6 +124,14 @@ const main = async () => {
 		const dataPacket = await contract.fetchIDFromAddress();
 		console.log("Identity now is : ", dataPacket);
 
+		console.log("Toggling KYC....");
+		const toggleRes = await contract.toggleKYC(nameHash);
+		console.log("KYC Toggled :", { toggleRes });
+
+		console.log("KYC successfully");
+		const dataPacket1 = await contract.fetchIDFromAddress();
+		console.log("Identity now is : ", dataPacket1);
+
 		//Let's begin the cross chain piece :)
 		//sending this datapacket crossChain
 
@@ -135,7 +143,7 @@ const main = async () => {
 		);
 		console.log(`Sending dataPacket: ${dataPacket}`);
 		const destinationContractAddress =
-			"0x34900e0C2EDcc421A380E416ea5e4c48061917bd";
+			"0xe2945a7AED7439D9c955D42f18d0dB31B7aa6df8";
 		const tx = await contract.syncCrossChainIdentity(
 			14,
 			destinationContractAddress,

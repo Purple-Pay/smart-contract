@@ -7,10 +7,12 @@ import "./IWormholeReceiver.sol";
 
 contract CrossChainIdentityPOC is IWormholeReceiver {
     struct IDStruct {
+		bool isKYCDone;
 		bytes namehash;
 		address sender_address;
 		bytes serialisedData;
 		bytes[] multi_chain_address;
+		
 	}
 
 	mapping(bytes => IDStruct) db; //mapping of nameHash => ID
@@ -70,6 +72,7 @@ contract CrossChainIdentityPOC is IWormholeReceiver {
 		multi_chain_address[0] = hashedChain;
 
 		IDStruct memory id = IDStruct(
+			false,
 			nameHash,
 			msg.sender,
 			serialisedData,
@@ -119,9 +122,19 @@ contract CrossChainIdentityPOC is IWormholeReceiver {
 
     IWormholeRelayer public immutable wormholeRelayer;
 
+	address public owner;
+
     constructor(address _wormholeRelayer) {
         wormholeRelayer = IWormholeRelayer(_wormholeRelayer);
+		owner = msg.sender;
     }
+
+	function toggleKYC(bytes memory nameHash) public {
+		require(msg.sender == owner, "Only owner can call this function");
+		IDStruct memory id = db[nameHash];
+		id.isKYCDone = !id.isKYCDone;
+		db[nameHash] = id;
+	}
 
     function quoteCrossChainIdentitySyncPrice(uint16 targetChain) public view returns (uint256 cost) {
         (cost,) = wormholeRelayer.quoteEVMDeliveryPrice(targetChain, 0, GAS_LIMIT);
