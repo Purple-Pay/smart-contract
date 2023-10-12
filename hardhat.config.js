@@ -36,16 +36,17 @@ module.exports = {
 			accounts: [private_key],
 		},
 		celoTestnet: {
-			url:"https://alfajores-forno.celo-testnet.org",
+			url: "https://alfajores-forno.celo-testnet.org",
 			chainId: 44787,
 			accounts: [private_key],
-		}
+		},
 	},
 	etherscan: {
 		apiKey: {
 			goerli: "I3542R4GUIGY42EGBWUTPAKHEI33UDYGVQ",
 			polygonMumbai: "6U5Q2T3HVNYVAVKFMXID47H5F9JRJ3KDNB",
 			polygon: "6U5Q2T3HVNYVAVKFMXID47H5F9JRJ3KDNB",
+			celoTestnet: "3GXHARPSQFBIE383U3NTMCYD5YFBI9FRJU",
 		},
 	},
 };

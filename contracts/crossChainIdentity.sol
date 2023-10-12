@@ -4,42 +4,54 @@ pragma solidity ^0.8.13;
 import "./IWormholeRelayer.sol";
 import "./IWormholeReceiver.sol";
 
-
 contract CrossChainIdentityPOC is IWormholeReceiver {
-    struct IDStruct {
+	struct IDStruct {
 		bool isKYCDone;
 		bytes namehash;
 		address sender_address;
 		bytes serialisedData;
 		bytes[] multi_chain_address;
-		
 	}
 
 	mapping(bytes => IDStruct) db; //mapping of nameHash => ID
 	mapping(address => bytes) reverseDBMapping; //exists only on main chain!
-    
-    //****************************FUNCTIONS FOR NAMESPACE AND DATA ADDITION*************************/
-	function isSenderRegistered(string memory _name,string memory _chain) public view returns (bool) {
+
+	//****************************FUNCTIONS FOR NAMESPACE AND DATA ADDITION*************************/
+	function isNamespaceClaimed(
+		string memory _name,
+		string memory _chain
+	) public view returns (bool) {
 		bytes memory nameHash = computeNameChainhash(_name, _chain);
-		if (db[nameHash].sender_address == msg.sender) {
+		if (db[nameHash].sender_address != address(0)) {
 			return true;
 		}
+
 		return false;
 	}
 
-	function computeNameChainhash(string memory _name, string memory _chain) internal pure returns (bytes memory namehash) {
+	function computeNameChainhash(
+		string memory _name,
+		string memory _chain
+	) internal pure returns (bytes memory namehash) {
 		namehash = abi.encode(_name, _chain);
 	}
 
-	function getNameHash(string memory _name, string memory _chain) external pure returns (bytes memory) {
+	function getNameHash(
+		string memory _name,
+		string memory _chain
+	) external pure returns (bytes memory) {
 		return computeNameChainhash(_name, _chain);
 	}
 
-	function getID(bytes memory nameHash) external view returns (IDStruct memory) {
+	function getID(
+		bytes memory nameHash
+	) external view returns (IDStruct memory) {
 		return db[nameHash];
 	}
 
-	function getSerialisedID(bytes memory nameHash) external view returns (bytes memory) {
+	function getSerialisedID(
+		bytes memory nameHash
+	) external view returns (bytes memory) {
 		return db[nameHash].serialisedData;
 	}
 
@@ -52,10 +64,14 @@ contract CrossChainIdentityPOC is IWormholeReceiver {
 		return db[nameHash];
 	}
 
-	function storeID(string memory _name,string memory _parent_chain,string memory _data) external returns (IDStruct memory) {
-		bool isRegistered = isSenderRegistered(_name, _parent_chain);
+	function storeID(
+		string memory _name,
+		string memory _parent_chain,
+		string memory _data
+	) external returns (IDStruct memory) {
+		bytes memory isRegistered = reverseDBMapping[msg.sender];
 
-		if (isRegistered) {
+		if (isRegistered.length != 0) {
 			revert("Sender already registered");
 		}
 
@@ -72,7 +88,7 @@ contract CrossChainIdentityPOC is IWormholeReceiver {
 		multi_chain_address[0] = hashedChain;
 
 		IDStruct memory id = IDStruct(
-			false,
+			true,
 			nameHash,
 			msg.sender,
 			serialisedData,
@@ -84,7 +100,8 @@ contract CrossChainIdentityPOC is IWormholeReceiver {
 		return id;
 	}
 
-	function addChain(string memory _name,
+	function addChain(
+		string memory _name,
 		string memory _registered_chain,
 		string memory _new_chain,
 		string memory _new_chain_address
@@ -115,19 +132,19 @@ contract CrossChainIdentityPOC is IWormholeReceiver {
 		(chain, user_address) = abi.decode(_hash, (string, address));
 	}
 
-    //************************************** Wormhole Part ****************************************************** */    
-    event IDSynced(IDStruct greeting, uint16 senderChain, address sender);
+	//************************************** Wormhole Part ****************************************************** */
+	event IDSynced(IDStruct greeting, uint16 senderChain, address sender);
 
-    uint256 constant GAS_LIMIT = 500_000;
+	uint256 constant GAS_LIMIT = 500_000;
 
-    IWormholeRelayer public immutable wormholeRelayer;
+	IWormholeRelayer public immutable wormholeRelayer;
 
 	address public owner;
 
-    constructor(address _wormholeRelayer) {
-        wormholeRelayer = IWormholeRelayer(_wormholeRelayer);
+	constructor(address _wormholeRelayer) {
+		wormholeRelayer = IWormholeRelayer(_wormholeRelayer);
 		owner = msg.sender;
-    }
+	}
 
 	function toggleKYC(bytes memory nameHash) public {
 		require(msg.sender == owner, "Only owner can call this function");
@@ -136,44 +153,58 @@ contract CrossChainIdentityPOC is IWormholeReceiver {
 		db[nameHash] = id;
 	}
 
-    function quoteCrossChainIdentitySyncPrice(uint16 targetChain) public view returns (uint256 cost) {
-        (cost,) = wormholeRelayer.quoteEVMDeliveryPrice(targetChain, 0, GAS_LIMIT);
-    }
- 
-    function syncCrossChainIdentity(uint16 targetChain, address targetAddress) public payable {
-        bytes memory nameHash = reverseDBMapping[msg.sender];
-        uint256 cost = quoteCrossChainIdentitySyncPrice(targetChain);
-        require(msg.value == cost);
-        IDStruct memory structToForward = db[nameHash];
-        wormholeRelayer.sendPayloadToEvm{value: cost}(
-            targetChain,
-            targetAddress,
-            abi.encode(structToForward, msg.sender), // payload
-            0, // no receiver value needed since we're just passing a message
-            GAS_LIMIT
-        );
-    }
+	function quoteCrossChainIdentitySyncPrice(
+		uint16 targetChain
+	) public view returns (uint256 cost) {
+		(cost, ) = wormholeRelayer.quoteEVMDeliveryPrice(
+			targetChain,
+			0,
+			GAS_LIMIT
+		);
+	}
 
-    mapping(bytes32 => bool) public seenDeliveryVaaHashes;
+	function syncCrossChainIdentity(
+		uint16 targetChain,
+		address targetAddress
+	) public payable {
+		bytes memory nameHash = reverseDBMapping[msg.sender];
+		uint256 cost = quoteCrossChainIdentitySyncPrice(targetChain);
+		require(msg.value == cost);
+		IDStruct memory structToForward = db[nameHash];
+		wormholeRelayer.sendPayloadToEvm{value: cost}(
+			targetChain,
+			targetAddress,
+			abi.encode(structToForward, msg.sender), // payload
+			0, // no receiver value needed since we're just passing a message
+			GAS_LIMIT
+		);
+	}
 
-    function receiveWormholeMessages(
-        bytes memory payload,
-        bytes[] memory, // additionalVaas
-        bytes32, // address that called 'sendPayloadToEvm' (HelloWormhole contract address)
-        uint16 sourceChain,
-        bytes32 deliveryHash // this can be stored in a mapping deliveryHash => bool to prevent duplicate deliveries
-    ) public payable override {
-        require(msg.sender == address(wormholeRelayer), "Only relayer allowed");
+	mapping(bytes32 => bool) public seenDeliveryVaaHashes;
 
-        // Ensure no duplicate deliveries
-        require(!seenDeliveryVaaHashes[deliveryHash], "Message already processed");
-        seenDeliveryVaaHashes[deliveryHash] = true;
+	function receiveWormholeMessages(
+		bytes memory payload,
+		bytes[] memory, // additionalVaas
+		bytes32, // address that called 'sendPayloadToEvm' (HelloWormhole contract address)
+		uint16 sourceChain,
+		bytes32 deliveryHash // this can be stored in a mapping deliveryHash => bool to prevent duplicate deliveries
+	) public payable override {
+		require(msg.sender == address(wormholeRelayer), "Only relayer allowed");
 
-        // Parse the payload and do the corresponding actions!
-        (IDStruct memory identity, address sender) = abi.decode(payload, (IDStruct, address));
-        bytes memory nameHash = identity.namehash;
-        db[nameHash] = identity;
-        emit IDSynced(db[nameHash], sourceChain, sender);
-    }
+		// Ensure no duplicate deliveries
+		require(
+			!seenDeliveryVaaHashes[deliveryHash],
+			"Message already processed"
+		);
+		seenDeliveryVaaHashes[deliveryHash] = true;
 
+		// Parse the payload and do the corresponding actions!
+		(IDStruct memory identity, address sender) = abi.decode(
+			payload,
+			(IDStruct, address)
+		);
+		bytes memory nameHash = identity.namehash;
+		db[nameHash] = identity;
+		emit IDSynced(db[nameHash], sourceChain, sender);
+	}
 }
